@@ -7,16 +7,8 @@ var formidable = require("formidable");
 var fs = require("fs");
 var blobControl = require("./blobController");
 
-var config = {
-  user: ,
-  password: "",
-  port: ,
-  server: "",
-  database: "",
-  options: {
-    encrypt: true
-  }
-};
+var config = {};
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
