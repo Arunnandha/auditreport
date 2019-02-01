@@ -1,0 +1,21 @@
+label {
+  margin-right: 2%;
+}
+.col-6 {
+  width: 100% !important;
+}
+.inputField {
+  background-color: rgb(195, 199, 255);
+}
+.vslDetails {
+  background-color: rgb(178, 176, 255);
+}
+input {
+  padding: 2px;
+}
+.p-inputtext {
+  width: 158px !important;
+}
+#aiDesc {
+  width: 158px !important;
+}
