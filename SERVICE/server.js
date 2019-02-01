@@ -7,7 +7,9 @@ var formidable = require("formidable");
 var fs = require("fs");
 var blobControl = require("./blobController");
 
-var config = {};
+var config = {
+  port: 1433
+};
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
