@@ -78,6 +78,7 @@ const reducer = (state = initState, action) => {
         fileName,
         description
       } = action.payload;
+
       let newBlobData = [...state.blobContent];
 
       newBlobData.push({
@@ -90,8 +91,34 @@ const reducer = (state = initState, action) => {
         ...state,
         blobContent: newBlobData
       };
+
+    case "EDIT_PHOTOGRAPH":
+      const {
+        editaiAttachmentId,
+        NewImagebase64File,
+        editFileName,
+        editDescription
+      } = action.payload;
+
+      let editedBlobData = [...state.blobContent];
+
+      const filteredBlobFiled = editedBlobData.filter(
+        item => item.AI_Hist_PhotographAttachmentsID !== editaiAttachmentId
+      );
+
+      filteredBlobFiled.push({
+        AI_Hist_PhotographAttachmentsID: editaiAttachmentId,
+        Description: editDescription,
+        FileName: editFileName,
+        BlobContents: NewImagebase64File
+      });
+      return {
+        ...state,
+        blobContent: filteredBlobFiled
+      };
   }
 
   return state;
 };
+
 export default reducer;

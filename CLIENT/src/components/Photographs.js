@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { DataView } from "primereact/dataview";
 import { Panel } from "primereact/panel";
 import { Dialog } from "primereact/dialog";
-import { handleUpload, deleteAttachment } from "../redux/actions/services";
+import {
+  handleUpload,
+  deleteAttachment,
+  handleEditUpload
+} from "../redux/actions/services";
 import { connect } from "react-redux";
 
 class PhotoGraphs extends Component {
@@ -11,11 +15,15 @@ class PhotoGraphs extends Component {
     this.state = {
       blobs: [],
       layout: "grid",
-      visible: false,
       selectedFile: null,
       activeAiAttachmentId: -1,
-      delDialogvisible: false,
-      description: ""
+      description: "",
+      selectedFileName: "",
+      callMode: "",
+      selectedImage: "",
+      visible: false,
+      viewDialog: false,
+      delDialogvisible: false
     };
     this.itemTemplate = this.itemTemplate.bind(this);
   }
@@ -62,11 +70,26 @@ class PhotoGraphs extends Component {
               onClick={e => {
                 this.setState({
                   visible: true,
-                  activeAiAttachmentId: blobs.AI_Hist_PhotographAttachmentsID
+                  callMode: "EDIT",
+                  activeAiAttachmentId: blobs.AI_Hist_PhotographAttachmentsID,
+                  description: blobs.Description,
+                  selectedFileName: blobs.FileName
                 });
               }}
             >
               <i className="far fa-edit" />
+            </button>
+            <button
+              title="View"
+              className="btn btn-info m-2"
+              onClick={e => {
+                this.setState({
+                  selectedImage: blobs.BlobContents,
+                  viewDialog: true
+                });
+              }}
+            >
+              <i class="fa fa-eye" aria-hidden="true" />
             </button>
           </Panel>
         </div>
@@ -93,7 +116,7 @@ class PhotoGraphs extends Component {
           <button
             className="btn btn-info btn-sm"
             onClick={() => {
-              this.setState({ visible: true });
+              this.setState({ visible: true, callMode: "NEW" });
             }}
           >
             Add New Photograph
@@ -104,7 +127,14 @@ class PhotoGraphs extends Component {
   }
 
   renderAddDialogContent() {
-    //this.btnSubmit.focus();
+    let editComponent = "";
+    if (this.state.callMode === "EDIT") {
+      editComponent = React.createElement(
+        "a",
+        { href: "#" },
+        this.state.selectedFileName
+      );
+    }
     return (
       <div
         className="form-group"
@@ -113,7 +143,6 @@ class PhotoGraphs extends Component {
         <textarea
           className="form-control"
           rows="5"
-          refs="txtdesc"
           value={this.state.description}
           onChange={e => this.setState({ description: e.target.value })}
         />
@@ -121,16 +150,19 @@ class PhotoGraphs extends Component {
           <input
             type="file"
             name="myFile"
-            refs="filephotoGraphAttach"
-            //value={this.state.selectedFile}
+            ref={ref => (this.fileInput = ref)}
             accept="image/*"
             onChange={this.handleUploadFile}
           />
         </div>
+        {editComponent}
         <div style={{ textAlign: "right" }} className="p-col-12">
           <button
             className="btn btn-outline-danger btn-sm m-2"
-            onClick={() => this.setState({ visible: false })}
+            onClick={() => {
+              this.setState({ visible: false });
+              this.clearDialog();
+            }}
           >
             Cancel
           </button>
@@ -172,6 +204,20 @@ class PhotoGraphs extends Component {
     );
   }
 
+  renderviewDialogContent() {
+    return (
+      <div
+        className="form-group"
+        style={{ fontSize: "16px", textAlign: "left" }}
+      >
+        <img
+          style={{ width: "600px", height: "500px" }}
+          src={"data:image/jpg;base64," + this.state.selectedImage}
+        />
+      </div>
+    );
+  }
+
   handleUploadFile = event => {
     this.setState({
       selectedFile: event.target.files[0]
@@ -179,15 +225,27 @@ class PhotoGraphs extends Component {
   };
 
   submitPhotoGraph = () => {
-    this.props.handleUploadBlob(
-      this.state.selectedFile,
-      this.state.selectedFile.name,
-      this.state.description
-    );
-    this.setState({ visible: false, description: "" });
+    if (this.state.callMode !== "EDIT")
+      this.props.handleUploadBlob(
+        this.state.selectedFile,
+        this.state.selectedFile.name,
+        this.state.description
+      );
+    else {
+      this.props.handleEditBlob(
+        this.state.selectedFile,
+        this.state.selectedFile.name,
+        this.state.description,
+        this.state.activeAiAttachmentId
+      );
+    }
+    this.clearDialog();
   };
 
-  clearDialog = () => {};
+  clearDialog = () => {
+    this.setState({ visible: false, description: "" });
+    this.fileInput.value = "";
+  };
 
   render() {
     const header = this.renderHeader();
@@ -203,11 +261,11 @@ class PhotoGraphs extends Component {
           />
         </div>
         <Dialog
-          header="Add New Photograph"
+          header="Add/Edit New Photograph"
           visible={this.state.visible}
           width="500px"
           modal={true}
-          onHide={() => this.setState({ visible: false })}
+          onHide={() => this.clearDialog()}
         >
           {this.renderAddDialogContent()}
         </Dialog>
@@ -219,6 +277,15 @@ class PhotoGraphs extends Component {
           onHide={() => this.setState({ delDialogvisible: false })}
         >
           {this.renderDeleteDialogContent()}
+        </Dialog>
+        <Dialog
+          header="View Image"
+          visible={this.state.viewDialog}
+          width="650px"
+          modal={true}
+          onHide={() => this.setState({ viewDialog: false })}
+        >
+          {this.renderviewDialogContent()}
         </Dialog>
       </div>
     );
@@ -236,7 +303,21 @@ const dispatchAction = dispatch => {
     delBlob: AI_Hist_PhotographAttachmentsID =>
       dispatch(deleteAttachment(AI_Hist_PhotographAttachmentsID)),
     handleUploadBlob: (selectedFile, selectedFileName, description) =>
-      dispatch(handleUpload(selectedFile, selectedFileName, description))
+      dispatch(handleUpload(selectedFile, selectedFileName, description)),
+    handleEditBlob: (
+      selectedFile,
+      selectedFileName,
+      description,
+      activeAiAttachmentId
+    ) =>
+      dispatch(
+        handleEditUpload(
+          selectedFile,
+          selectedFileName,
+          description,
+          activeAiAttachmentId
+        )
+      )
   };
 };
 
