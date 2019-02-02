@@ -11,6 +11,9 @@
 # production
 /build
 
+#senditiveData
+/sensitiveData
+
 # misc
 .DS_Store
 .env.local

@@ -7,20 +7,20 @@ var formidable = require("formidable");
 var fs = require("fs");
 var blobControl = require("./blobController");
 
-var config = {
-  port: 1433
-};
+var configFile = require("./sensitiveData/config");
+var config = configFile.config;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 app.get("/getAIdetails/:histID", async (req, res) => {
+  console.log(config);
   var histID = req.params.histID;
   // console.log("histID", histID);
   try {
-    let pool = await mssql.connect(config);
-    let result1 = await pool
+    let conn = await mssql.connect(config);
+    let result1 = await conn
       .request()
       .input("AI_HistID", mssql.BigInt, histID)
       .execute("usp_AI_RN_GetAIDetails");
@@ -43,8 +43,8 @@ app.post("/updateAIdetails/", async (req, res) => {
 
   // console.log("histID update", req.body.histID);
   try {
-    let pool = await mssql.connect(config);
-    let result1 = await pool
+    let conn = await mssql.connect(config);
+    let result1 = await conn
       .request()
       .input(
         "AuditInspection_StartDate",
@@ -140,31 +140,26 @@ app.post("/upLoadImageFile", async (req, res) => {
 
 app.get("/getAIPhotographs/:histID", async (req, res) => {
   var histID = req.params.histID;
-  try {
-    let pool = await mssql.connect(config);
-    let result1 = await pool.request()
-      .query(`select AI_Hist_PhotographAttachmentsID,Description,FileName,BlobContents 
-      from AI_Hist_PhotographAttachments where IsDeleted=0 and AI_HistID = ${histID}`);
-    mssql.close();
-    result1.recordset.forEach((element, i) => {
-      if (element.BlobContents !== null) {
-        result1.recordset[i].BlobContents = Buffer.from(
-          element.BlobContents
-        ).toString("base64");
-      }
-    });
-    res.send(result1.recordset);
-  } catch (err) {
-    console.log("err---->>>>>" + err);
-    mssql.close();
-  }
+  var origin = "cloud";
+  var photographData;
+  var companyID = 1;
+  var vesselID = 905;
+  var tableName = "AI_Hist_PhotographAttachments";
+  photographData = await blobControl.downloadFile(
+    req,
+    res,
+    companyID,
+    vesselID,
+    tableName,
+    histID
+  );
 });
 app.post("/deleteAIPhotographs/", async (req, res) => {
   var attchmentId = req.body.aiHistAttachmentID;
 
   try {
-    let pool = await mssql.connect(config);
-    let result1 = await pool
+    let conn = await mssql.connect(config);
+    let result1 = await conn
       .request()
       .query(
         `update AI_Hist_PhotographAttachments set IsDeleted=1 where  AI_Hist_PhotographAttachmentsID=${attchmentId}`
