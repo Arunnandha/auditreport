@@ -63,6 +63,7 @@ export const handleUpload = (imgFile, fileName, description) => {
       .post(`http://localhost:5000/upLoadImageFile/`, data, config)
       .then(res => {
         let aiHistAttachmentID = res.data;
+        console.log(res.data);
         dispatch({
           type: action.UPLOAD_PHOTOGRAPH,
           payload: { aiHistAttachmentID, NewImagebase64, fileName, description }
@@ -86,7 +87,6 @@ export const getAIHistAttachment = (histID, dispatch) => {
 };
 
 export const deleteAttachment = aiHistAttachmentID => {
-  console.log("hitted");
   return dispatch => {
     axios
       .post(`http://localhost:5000/deleteAIPhotographs/`, {
@@ -100,6 +100,46 @@ export const deleteAttachment = aiHistAttachmentID => {
       })
       .catch(err => {
         console.log(err);
+      });
+  };
+};
+
+export const handleEditUpload = (
+  editaiImagebase64File,
+  editFileName,
+  editDescription,
+  editaiAttachmentId
+) => {
+  return dispatch => {
+    let data = new FormData();
+    data.append("file", editaiImagebase64File, editFileName);
+    data.append("description", editDescription);
+    data.append("AI_Hist_PhotographAttachmentsID", editaiAttachmentId);
+    let config = {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    };
+
+    var NewImagebase64File = "";
+    var reader = new FileReader();
+    reader.readAsDataURL(editaiImagebase64File);
+    reader.onloadend = function() {
+      NewImagebase64File = reader.result.split("base64,").pop();
+    };
+
+    axios
+      .post(`http://localhost:5000/editUploadImageFile/`, data, config)
+      .then(res => {
+        dispatch({
+          type: action.EDIT_PHOTOGRAPH,
+          payload: {
+            editaiAttachmentId,
+            NewImagebase64File,
+            editFileName,
+            editDescription
+          }
+        });
       });
   };
 };

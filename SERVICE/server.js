@@ -172,6 +172,55 @@ app.post("/deleteAIPhotographs/", async (req, res) => {
     mssql.close();
   }
 });
+app.post("/editUploadImageFile/", async (req, res) => {
+  var form = new formidable.IncomingForm();
+  form.parse(req, async function(err, fields, files) {
+    var aiHistPhotoGraphAttachmentID = fields.AI_Hist_PhotographAttachmentsID;
+    var oldpath = files.file.path;
+    var desc = fields.description;
+    var fileName = files.file.name;
+    var fileExtension = files.file.type.split("/").pop();
+    var fileSize = files.file.size;
+    var companyID = 1;
+    var vesselID = 905;
+    var tableName = "AI_Hist_PhotographAttachments";
+    var fileContent;
+    var newpath = "C:/wdir/" + fileName;
+    fs.rename(oldpath, newpath, async function(err) {
+      if (err) throw err;
+      fs.readFile(newpath, async function(err, data) {
+        fileContent = await new Buffer(data);
+        try {
+          let pool = await mssql.connect(config);
+          let result1 = await pool
+            .request()
+            .input(
+              "AI_Hist_PhotographAttachmentsID",
+              mssql.BigInt,
+              aiHistPhotoGraphAttachmentID
+            )
+            .input("VesselId", mssql.Int, vesselID)
+            .input("Description", mssql.VarChar(250), desc)
+            .input("FileName", mssql.VarChar(150), fileName)
+            .input("FileType", mssql.VarChar(5), fileExtension)
+            .input("OriginalFileType", mssql.VarChar(5), fileExtension)
+            .input("BlobContents", mssql.Image, fileContent)
+            .input("BlobSize", mssql.Int, fileSize)
+            .input("OriginalFileSize", mssql.Int, fileSize)
+            .input("AddedOn", mssql.DateTime, new Date())
+            .input("IsUploaded", mssql.Int, 1)
+            .execute("usp_AI_RN_UpdatePhotoGraphToDB");
+          mssql.close();
+          res.send("ok");
+        } catch (err) {
+          console.log("err---->>>>>" + err);
+          mssql.close();
+        }
+      });
+    });
+  });
+});
+
 mssql.on("error", err => {
   // ... error handler
 });
