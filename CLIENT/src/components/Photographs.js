@@ -52,9 +52,10 @@ class PhotoGraphs extends Component {
               src={"data:image/jpg;base64," + blobs.BlobContents}
             />
             <hr className="ui-widget-content" style={{ borderTop: 0 }} />
+            {/*click to open delete dialog box */}
             <button
               title="Delete"
-              className="btn btn-info m-2"
+              className="btn btn-danger m-2"
               onClick={e => {
                 this.setState({
                   delDialogvisible: true,
@@ -64,6 +65,7 @@ class PhotoGraphs extends Component {
             >
               <i className="fas fa-trash-alt" />
             </button>
+            {/* click to open edit dialog box */}
             <button
               title="Edit"
               className="btn btn-info m-2"
@@ -79,12 +81,14 @@ class PhotoGraphs extends Component {
             >
               <i className="far fa-edit" />
             </button>
+            {/*click to open view dialog box */}
             <button
               title="View"
               className="btn btn-info m-2"
               onClick={e => {
                 this.setState({
                   selectedImage: blobs.BlobContents,
+                  selectedFileName: blobs.FileName,
                   viewDialog: true
                 });
               }}
@@ -113,6 +117,7 @@ class PhotoGraphs extends Component {
           style={{ marginLeft: "5px" }}
           style={{ textAlign: "left" }}
         >
+          {/* click to open add Attachments dialog box */}
           <button
             className="btn btn-info btn-sm"
             onClick={() => {
@@ -214,6 +219,13 @@ class PhotoGraphs extends Component {
           style={{ width: "600px", height: "500px" }}
           src={"data:image/jpg;base64," + this.state.selectedImage}
         />
+        <a
+          style={{ position: "relative", top: "5%", left: "80%" }}
+          download={this.state.selectedFileName}
+          href={"data:image/jpg;base64," + this.state.selectedImage}
+        >
+          download
+        </a>
       </div>
     );
   }

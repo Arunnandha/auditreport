@@ -15,7 +15,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 app.get("/getAIdetails/:histID", async (req, res) => {
-  console.log(config);
   var histID = req.params.histID;
   // console.log("histID", histID);
   try {
@@ -190,32 +189,20 @@ app.post("/editUploadImageFile/", async (req, res) => {
       if (err) throw err;
       fs.readFile(newpath, async function(err, data) {
         fileContent = await new Buffer(data);
-        try {
-          let pool = await mssql.connect(config);
-          let result1 = await pool
-            .request()
-            .input(
-              "AI_Hist_PhotographAttachmentsID",
-              mssql.BigInt,
-              aiHistPhotoGraphAttachmentID
-            )
-            .input("VesselId", mssql.Int, vesselID)
-            .input("Description", mssql.VarChar(250), desc)
-            .input("FileName", mssql.VarChar(150), fileName)
-            .input("FileType", mssql.VarChar(5), fileExtension)
-            .input("OriginalFileType", mssql.VarChar(5), fileExtension)
-            .input("BlobContents", mssql.Image, fileContent)
-            .input("BlobSize", mssql.Int, fileSize)
-            .input("OriginalFileSize", mssql.Int, fileSize)
-            .input("AddedOn", mssql.DateTime, new Date())
-            .input("IsUploaded", mssql.Int, 1)
-            .execute("usp_AI_RN_UpdatePhotoGraphToDB");
-          mssql.close();
-          res.send("ok");
-        } catch (err) {
-          console.log("err---->>>>>" + err);
-          mssql.close();
-        }
+        blobControl.editFile(
+          req,
+          res,
+          aiHistPhotoGraphAttachmentID,
+          desc,
+          fileName,
+          fileExtension,
+          fileSize,
+          companyID,
+          vesselID,
+          tableName,
+          newpath,
+          fileContent
+        );
       });
     });
   });
