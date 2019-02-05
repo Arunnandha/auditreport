@@ -7,7 +7,7 @@ var formidable = require("formidable");
 var fs = require("fs");
 var blobControl = require("./blobController");
 
-var configFile = require("./sensitiveData/config");
+var configFile = require("./config/config");
 var config = configFile.config;
 
 app.use(bodyParser.json());
