@@ -87,7 +87,7 @@ app.post("/updateAIdetails/", async (req, res) => {
       .input("LastActionUserID", mssql.VarChar(50), "MASTER")
       .input("NoObservations", mssql.Int, 0)
       .input("AI_HistID", mssql.BigInt, histID)
-      .input("VesselID", mssql.Int, 905)
+      .input("VesselID", mssql.Int, AI_Updated_details.VesselID)
       .execute("usp_AI_RN_UpdateAIDetails");
 
     mssql.close();
@@ -107,7 +107,7 @@ app.post("/upLoadImageFile", async (req, res) => {
     var fileExtension = files.file.type.split("/").pop();
     var fileSize = files.file.size;
     var companyID = 1;
-    var vesselID = 905;
+    var VesselID = fields.description.VesselID;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -126,7 +126,7 @@ app.post("/upLoadImageFile", async (req, res) => {
           fileSize,
           companyID,
           tableName,
-          vesselID,
+          VesselID,
           newpath
         );
       });
@@ -137,18 +137,18 @@ app.post("/upLoadImageFile", async (req, res) => {
   });
 });
 
-app.get("/getAIPhotographs/:histID", async (req, res) => {
+app.get("/getAIPhotographs/:histID/:VesselID", async (req, res) => {
   var histID = req.params.histID;
   var origin = "cloud";
   var photographData;
   var companyID = 1;
-  var vesselID = 905;
+  var VesselID = req.params.VesselID;
   var tableName = "AI_Hist_PhotographAttachments";
   photographData = await blobControl.downloadFile(
     req,
     res,
     companyID,
-    vesselID,
+    VesselID,
     tableName,
     histID
   );
@@ -181,7 +181,7 @@ app.post("/editUploadImageFile/", async (req, res) => {
     var fileExtension = files.file.type.split("/").pop();
     var fileSize = files.file.size;
     var companyID = 1;
-    var vesselID = 905;
+    var VesselID = fields.VesselID;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -198,7 +198,7 @@ app.post("/editUploadImageFile/", async (req, res) => {
           fileExtension,
           fileSize,
           companyID,
-          vesselID,
+          VesselID,
           tableName,
           newpath,
           fileContent
