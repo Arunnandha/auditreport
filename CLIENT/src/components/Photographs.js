@@ -242,7 +242,8 @@ class PhotoGraphs extends Component {
         this.state.selectedFile,
         this.state.selectedFile.name,
         this.state.description,
-        this.props.VesselID
+        this.props.VesselID,
+        this.props.Origin
       );
     else {
       this.props.handleEditBlob(
@@ -250,7 +251,8 @@ class PhotoGraphs extends Component {
         this.state.selectedFile.name,
         this.state.description,
         this.state.activeAiAttachmentId,
-        this.props.VesselID
+        this.props.VesselID,
+        this.props.Origin
       );
     }
     this.clearDialog();
@@ -317,7 +319,8 @@ class PhotoGraphs extends Component {
 const mapStateToProps = state => {
   return {
     blobContent: state.blobContent,
-    VesselID: state.AIdetails.VesselID
+    VesselID: state.AIdetails.VesselID,
+    Origin: state.AIdetails.Origin
   };
 };
 
@@ -325,16 +328,29 @@ const dispatchAction = dispatch => {
   return {
     delBlob: AI_Hist_PhotographAttachmentsID =>
       dispatch(deleteAttachment(AI_Hist_PhotographAttachmentsID)),
-    handleUploadBlob: (selectedFile, selectedFileName, description, VesselID) =>
+    handleUploadBlob: (
+      selectedFile,
+      selectedFileName,
+      description,
+      VesselID,
+      Origin
+    ) =>
       dispatch(
-        handleUpload(selectedFile, selectedFileName, description, VesselID)
+        handleUpload(
+          selectedFile,
+          selectedFileName,
+          description,
+          VesselID,
+          Origin
+        )
       ),
     handleEditBlob: (
       selectedFile,
       selectedFileName,
       description,
       activeAiAttachmentId,
-      VesselID
+      VesselID,
+      Origin
     ) =>
       dispatch(
         handleEditUpload(
@@ -342,7 +358,8 @@ const dispatchAction = dispatch => {
           selectedFileName,
           description,
           activeAiAttachmentId,
-          VesselID
+          VesselID,
+          Origin
         )
       )
   };

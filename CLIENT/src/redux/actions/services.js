@@ -12,7 +12,9 @@ export const getAIdetailsFromDB = histID => {
           AIdetails: res.data[0],
           histID: histID
         });
-        getAIHistAttachment(histID, res.data[0].VesselID, dispatch);
+        let vesselID = res.data[0].VesselID;
+        let origin = res.data[0].Origin;
+        getAIHistAttachment(histID, vesselID, origin, dispatch);
       })
       .catch(err => {
         console.log(err);
@@ -39,13 +41,20 @@ export const updateAIdetailsFromDB = (updatedDetails, histID) => {
   };
 };
 
-export const handleUpload = (imgFile, fileName, description, vesselID) => {
+export const handleUpload = (
+  imgFile,
+  fileName,
+  description,
+  vesselID,
+  Origin
+) => {
   return dispatch => {
     let data = new FormData();
 
     data.append("file", imgFile, fileName);
     data.append("description", description);
     data.append("VesselID", vesselID);
+    data.append("Origin", Origin);
     // data.append("fileExtension", fileExtension);
     let config = {
       headers: {
@@ -73,9 +82,11 @@ export const handleUpload = (imgFile, fileName, description, vesselID) => {
   };
 };
 
-export const getAIHistAttachment = (histID, VesselID, dispatch) => {
+export const getAIHistAttachment = (histID, VesselID, Origin, dispatch) => {
   axios
-    .get(`http://localhost:5000/getAIPhotographs/${histID}/${VesselID}`)
+    .get(
+      `http://localhost:5000/getAIPhotographs/${histID}/${VesselID}/${Origin}`
+    )
     .then(res => {
       dispatch({
         type: action.GET_BLOB,
@@ -110,7 +121,8 @@ export const handleEditUpload = (
   editFileName,
   editDescription,
   editaiAttachmentId,
-  VesselID
+  VesselID,
+  Origin
 ) => {
   return dispatch => {
     let data = new FormData();
@@ -118,6 +130,7 @@ export const handleEditUpload = (
     data.append("description", editDescription);
     data.append("AI_Hist_PhotographAttachmentsID", editaiAttachmentId);
     data.append("VesselID", VesselID);
+    data.append("Origin", Origin);
     let config = {
       headers: {
         "Content-Type": "multipart/form-data"

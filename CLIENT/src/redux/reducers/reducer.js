@@ -1,6 +1,7 @@
 const initState = {
   histID: 0,
   AIdetails: {
+    Origin: "",
     AIDescription: "",
     AuditInspection_EndDate: new Date(),
     AuditInspection_StartDate: new Date(),
