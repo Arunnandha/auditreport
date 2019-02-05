@@ -107,7 +107,7 @@ app.post("/upLoadImageFile", async (req, res) => {
     var fileExtension = files.file.type.split("/").pop();
     var fileSize = files.file.size;
     var companyID = 1;
-    var VesselID = fields.description.VesselID;
+    var VesselID = fields.VesselID;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
