@@ -108,6 +108,7 @@ app.post("/upLoadImageFile", async (req, res) => {
     var fileSize = files.file.size;
     var companyID = 1;
     var VesselID = fields.VesselID;
+    var Origin = fields.Origin;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -127,7 +128,8 @@ app.post("/upLoadImageFile", async (req, res) => {
           companyID,
           tableName,
           VesselID,
-          newpath
+          newpath,
+          Origin
         );
       });
 
@@ -137,9 +139,9 @@ app.post("/upLoadImageFile", async (req, res) => {
   });
 });
 
-app.get("/getAIPhotographs/:histID/:VesselID", async (req, res) => {
+app.get("/getAIPhotographs/:histID/:VesselID/:Origin", async (req, res) => {
   var histID = req.params.histID;
-  var origin = "cloud";
+  var Origin = req.params.Origin;
   var photographData;
   var companyID = 1;
   var VesselID = req.params.VesselID;
@@ -150,7 +152,8 @@ app.get("/getAIPhotographs/:histID/:VesselID", async (req, res) => {
     companyID,
     VesselID,
     tableName,
-    histID
+    histID,
+    Origin
   );
 });
 app.post("/deleteAIPhotographs/", async (req, res) => {
@@ -182,6 +185,7 @@ app.post("/editUploadImageFile/", async (req, res) => {
     var fileSize = files.file.size;
     var companyID = 1;
     var VesselID = fields.VesselID;
+    var Origin = fields.Origin;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -201,7 +205,8 @@ app.post("/editUploadImageFile/", async (req, res) => {
           VesselID,
           tableName,
           newpath,
-          fileContent
+          fileContent,
+          Origin
         );
       });
     });

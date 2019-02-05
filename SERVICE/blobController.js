@@ -24,10 +24,11 @@ module.exports = {
     companyID,
     tableName,
     VesselID,
-    filepath
+    filepath,
+    Origin
   ) => {
     //last parameter is a function
-    GetStorageOption(companyID, VesselID, tableName, (data, err) => {
+    GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
 
@@ -236,8 +237,8 @@ module.exports = {
       });
     };
   },
-  downloadFile: (req, res, companyID, VesselID, tableName, histID) => {
-    GetStorageOption(companyID, VesselID, tableName, (data, err) => {
+  downloadFile: (req, res, companyID, VesselID, tableName, histID, Origin) => {
+    GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
         console.log(
@@ -351,9 +352,10 @@ module.exports = {
     VesselID,
     tableName,
     newpath,
-    fileContent
+    fileContent,
+    Origin
   ) => {
-    GetStorageOption(companyID, VesselID, tableName, (data, err) => {
+    GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
         console.log(
@@ -544,23 +546,25 @@ module.exports = {
   }
 };
 
-var GetStorageOption = async (C_CompanyID, VesselID, TableName, cb) => {
+var GetStorageOption = async (Origin, C_CompanyID, VesselID, TableName, cb) => {
   // cb --> callback --> (data,err)=>{}
-  try {
-    let conn = await mssql.connect(config);
-    let result1 = await conn
-      .request()
-      .input("C_CompanyID", mssql.BigInt, C_CompanyID)
-      .input("VesselID", mssql.Int, VesselID)
-      .input("TableName", mssql.VarChar(120), TableName)
-      .execute("ai_GetStorageOption");
-    mssql.close();
-    console.log(result1.recordset);
-    //test storage option database/ cloud; directly  Hardcoded
+  if (Origin.toUpperCase() === "VSL") {
     var data = [{ HQ_Storage_Option: "database" }];
-
     cb(data);
-  } catch (err) {
-    console.log("error => ..." + err);
+  } else {
+    try {
+      let conn = await mssql.connect(config);
+      let result1 = await conn
+        .request()
+        .input("C_CompanyID", mssql.BigInt, C_CompanyID)
+        .input("VesselID", mssql.Int, VesselID)
+        .input("TableName", mssql.VarChar(120), TableName)
+        .execute("usp_AI_RN_GetStorageOption");
+      mssql.close();
+      let data = result1.recordset;
+      cb(data);
+    } catch (err) {
+      console.log("error => ..." + err);
+    }
   }
 };
