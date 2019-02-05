@@ -84,7 +84,7 @@ class PhotoGraphs extends Component {
             {/*click to open view dialog box */}
             <button
               title="View"
-              className="btn btn-info m-2"
+              className="btn btn-primary m-2"
               onClick={e => {
                 this.setState({
                   selectedImage: blobs.BlobContents,
@@ -119,7 +119,7 @@ class PhotoGraphs extends Component {
         >
           {/* click to open add Attachments dialog box */}
           <button
-            className="btn btn-info btn-sm"
+            className="btn btn-primary btn-sm"
             onClick={() => {
               this.setState({ visible: true, callMode: "NEW" });
             }}
@@ -190,7 +190,7 @@ class PhotoGraphs extends Component {
         <p>Are you sure want to delete?</p>
         <div style={{ textAlign: "right" }} className="p-col-12">
           <button
-            className="btn btn-outline-info btn-sm m-2"
+            className="btn btn-outline-danger btn-sm m-2"
             onClick={() => this.setState({ delDialogvisible: false })}
           >
             Cancel
