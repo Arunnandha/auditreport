@@ -16,7 +16,8 @@ const initState = {
     Flag: "",
     DelivDate: new Date(),
     ImoNo: "",
-    NoOfDefectAdded: 0
+    NoOfDefectAdded: 0,
+    VesselID: -1
   },
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },

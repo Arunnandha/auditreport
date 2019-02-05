@@ -12,7 +12,7 @@ export const getAIdetailsFromDB = histID => {
           AIdetails: res.data[0],
           histID: histID
         });
-        getAIHistAttachment(histID, dispatch);
+        getAIHistAttachment(histID, res.data[0].VesselID, dispatch);
       })
       .catch(err => {
         console.log(err);
@@ -39,12 +39,13 @@ export const updateAIdetailsFromDB = (updatedDetails, histID) => {
   };
 };
 
-export const handleUpload = (imgFile, fileName, description) => {
+export const handleUpload = (imgFile, fileName, description, vesselID) => {
   return dispatch => {
     let data = new FormData();
 
     data.append("file", imgFile, fileName);
     data.append("description", description);
+    data.append("VesselID", vesselID);
     // data.append("fileExtension", fileExtension);
     let config = {
       headers: {
@@ -72,9 +73,9 @@ export const handleUpload = (imgFile, fileName, description) => {
   };
 };
 
-export const getAIHistAttachment = (histID, dispatch) => {
+export const getAIHistAttachment = (histID, VesselID, dispatch) => {
   axios
-    .get(`http://localhost:5000/getAIPhotographs/${histID}`)
+    .get(`http://localhost:5000/getAIPhotographs/${histID}/${VesselID}`)
     .then(res => {
       dispatch({
         type: action.GET_BLOB,
@@ -108,13 +109,15 @@ export const handleEditUpload = (
   editaiImagebase64File,
   editFileName,
   editDescription,
-  editaiAttachmentId
+  editaiAttachmentId,
+  VesselID
 ) => {
   return dispatch => {
     let data = new FormData();
     data.append("file", editaiImagebase64File, editFileName);
     data.append("description", editDescription);
     data.append("AI_Hist_PhotographAttachmentsID", editaiAttachmentId);
+    data.append("VesselID", VesselID);
     let config = {
       headers: {
         "Content-Type": "multipart/form-data"

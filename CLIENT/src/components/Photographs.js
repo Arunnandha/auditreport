@@ -84,7 +84,7 @@ class PhotoGraphs extends Component {
             {/*click to open view dialog box */}
             <button
               title="View"
-              className="btn btn-primary m-2"
+              className="btn btn-info m-2"
               onClick={e => {
                 this.setState({
                   selectedImage: blobs.BlobContents,
@@ -119,7 +119,7 @@ class PhotoGraphs extends Component {
         >
           {/* click to open add Attachments dialog box */}
           <button
-            className="btn btn-primary btn-sm"
+            className="btn btn-info btn-sm"
             onClick={() => {
               this.setState({ visible: true, callMode: "NEW" });
             }}
@@ -190,7 +190,7 @@ class PhotoGraphs extends Component {
         <p>Are you sure want to delete?</p>
         <div style={{ textAlign: "right" }} className="p-col-12">
           <button
-            className="btn btn-outline-danger btn-sm m-2"
+            className="btn btn-outline-info btn-sm m-2"
             onClick={() => this.setState({ delDialogvisible: false })}
           >
             Cancel
@@ -241,14 +241,16 @@ class PhotoGraphs extends Component {
       this.props.handleUploadBlob(
         this.state.selectedFile,
         this.state.selectedFile.name,
-        this.state.description
+        this.state.description,
+        this.props.VesselID
       );
     else {
       this.props.handleEditBlob(
         this.state.selectedFile,
         this.state.selectedFile.name,
         this.state.description,
-        this.state.activeAiAttachmentId
+        this.state.activeAiAttachmentId,
+        this.props.VesselID
       );
     }
     this.clearDialog();
@@ -306,7 +308,8 @@ class PhotoGraphs extends Component {
 
 const mapStateToProps = state => {
   return {
-    blobContent: state.blobContent
+    blobContent: state.blobContent,
+    VesselID: state.AIdetails.VesselID
   };
 };
 
@@ -314,20 +317,24 @@ const dispatchAction = dispatch => {
   return {
     delBlob: AI_Hist_PhotographAttachmentsID =>
       dispatch(deleteAttachment(AI_Hist_PhotographAttachmentsID)),
-    handleUploadBlob: (selectedFile, selectedFileName, description) =>
-      dispatch(handleUpload(selectedFile, selectedFileName, description)),
+    handleUploadBlob: (selectedFile, selectedFileName, description, VesselID) =>
+      dispatch(
+        handleUpload(selectedFile, selectedFileName, description, VesselID)
+      ),
     handleEditBlob: (
       selectedFile,
       selectedFileName,
       description,
-      activeAiAttachmentId
+      activeAiAttachmentId,
+      VesselID
     ) =>
       dispatch(
         handleEditUpload(
           selectedFile,
           selectedFileName,
           description,
-          activeAiAttachmentId
+          activeAiAttachmentId,
+          VesselID
         )
       )
   };
