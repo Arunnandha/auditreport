@@ -24,14 +24,21 @@ module.exports = {
     vesselID,
     filepath
   ) => {
+    //last parameter is a function
     GetStorageOption(companyID, vesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
+
         console.log(
           "strHQ_Storage_Option before call :+ " + strHQ_Storage_Option
         );
-        // == "database".toUpperCase()
+
+        //If storage option "database" Attachment should be uploaded to database
+        //otherwise Attachment should be uploaded to clould
+        //If cloud attachment only present in clould other details shared in database.
+
         if (strHQ_Storage_Option.toUpperCase() == "database".toUpperCase()) {
+          // if ("database") {
           console.log("strHQ_Storage_Option + " + strHQ_Storage_Option);
           uploadFileToDB(
             req,
@@ -59,6 +66,7 @@ module.exports = {
       }
     });
 
+    // uploadFileToDB
     var uploadFileToDB = async (
       req,
       res,
@@ -98,7 +106,7 @@ module.exports = {
           .input("AddedOn", mssql.DateTime, new Date())
           .input("IsUploaded", mssql.Int, 1)
           .output("Newai_HistPhotoGraphID", AI_HistPhotoGraphID)
-          .execute("usp_ai_UploadPhotoGraphToDB");
+          .execute("usp_AI_RN_UploadPhotoGraphToDB");
 
         mssql.close();
         res.send(result1.output.Newai_HistPhotoGraphID);
@@ -153,7 +161,8 @@ module.exports = {
               .input("AddedOn", mssql.DateTime, new Date())
               .input("IsUploaded", mssql.Int, 1)
               .output("Newai_HistPhotoGraphID", AI_HistPhotoGraphID)
-              .execute("usp_ai_UploadPhotoGraphToDB");
+              .execute("usp_AI_RN_UploadPhotoGraphToDB");
+
             console.log("newly inserted value ", AI_HistPhotoGraphID);
 
             mssql.close();
@@ -162,7 +171,7 @@ module.exports = {
             console.log("err---->>>>>" + err);
             mssql.close();
           }
-
+          //Creating blob service for read,create ,delete & update files from azure.
           var blobService = azure.createBlobService(storageAccount, accessKey);
           var t = "unable to connect";
           blobService.createContainerIfNotExists(container, function(
@@ -173,12 +182,14 @@ module.exports = {
             if (!error) {
               t = "could connec t to conatiner...";
               console.log("Connecting blob..");
+
+              // blobService.createBlockBlobFromStream(container: string, blob: string,
+              //  stream: internal.Readable, streamLength: number, callback: azurestorage)
               blobService.createBlockBlobFromStream(
                 container,
                 "AI_HistPhotoGraph_" +
                   result1.output.Newai_HistPhotoGraphID +
-                  "." +
-                  fileExtension, //filename
+                  fileName, //filename
                 fs.createReadStream(filepath),
                 data.length,
                 function(error, result, response) {
@@ -226,8 +237,8 @@ module.exports = {
         console.log(
           "strHQ_Storage_Option before call :+ " + strHQ_Storage_Option
         );
-        // == "database".toUpperCase()
         if (strHQ_Storage_Option.toUpperCase() == "database".toUpperCase()) {
+          // if ("database") {
           console.log("strHQ_Storage_Option + " + strHQ_Storage_Option);
           downloadFileFromDB(req, res, histID);
         } else if (strHQ_Storage_Option == "Cloud") {
@@ -275,26 +286,20 @@ module.exports = {
               .query(`select AI_Hist_PhotographAttachmentsID,OriginalFileType,Description,FileName,BlobContents 
               from AI_Hist_PhotographAttachments where IsDeleted=0 and AI_HistID = ${histID}`);
             mssql.close();
-            console.log("cloud storage", result1);
+
             await result1.recordset.forEach(item => {
               item.AI_Hist_PhotographAttachmentsID;
               var downloadfilename = "C:/wdir/" + item.FileName;
               var blobName =
                 "AI_HistPhotoGraph_" +
                 item.AI_Hist_PhotographAttachmentsID +
-                "." +
-                item.OriginalFileType;
-              console.log(
-                "from file download from azure",
-                downloadfilename,
-                "--->",
-                blobName
-              );
+                item.FileName;
+
               var Description = item.Description;
               var FileName = item.FileName;
               var AI_Hist_PhotographAttachmentsID =
                 item.AI_Hist_PhotographAttachmentsID;
-
+              console.log("downloadfilename", downloadfilename);
               blobService.getBlobToLocalFile(
                 container,
                 blobName,
@@ -309,7 +314,6 @@ module.exports = {
                         Description: Description,
                         BlobContents: Buffer.from(data).toString("base64")
                       });
-                      console.log("buffer sendImageFiles", sendImageFiles);
                       if (err) {
                         return console.log(err);
                       }
@@ -328,10 +332,214 @@ module.exports = {
         }
       });
     };
+  },
+  editFile: (
+    req,
+    res,
+    aiHistPhotoGraphAttachmentID,
+    desc,
+    fileName,
+    fileExtension,
+    fileSize,
+    companyID,
+    vesselID,
+    tableName,
+    newpath,
+    fileContent
+  ) => {
+    GetStorageOption(companyID, vesselID, tableName, (data, err) => {
+      if (data) {
+        var strHQ_Storage_Option = data[0].HQ_Storage_Option;
+        console.log(
+          "strHQ_Storage_Option before call :+ " + strHQ_Storage_Option
+        );
+        if (strHQ_Storage_Option.toUpperCase() == "database".toUpperCase()) {
+          // if ("database") {
+          console.log("strHQ_Storage_Option + " + strHQ_Storage_Option);
+          editFileInDB(
+            req,
+            res,
+            aiHistPhotoGraphAttachmentID,
+            desc,
+            fileName,
+            fileExtension,
+            fileSize,
+            companyID,
+            vesselID,
+            tableName,
+            newpath,
+            fileContent
+          );
+        } else if (strHQ_Storage_Option == "Cloud") {
+          editFileInAzure(
+            req,
+            res,
+            aiHistPhotoGraphAttachmentID,
+            desc,
+            fileName,
+            fileExtension,
+            fileSize,
+            companyID,
+            vesselID,
+            tableName,
+            newpath,
+            fileContent
+          );
+        } else {
+          console.log("Error while retrieve storage option");
+        }
+      }
+    });
+
+    var editFileInDB = async (
+      req,
+      res,
+      aiHistPhotoGraphAttachmentID,
+      desc,
+      fileName,
+      fileExtension,
+      fileSize,
+      companyID,
+      vesselID,
+      tableName,
+      newpath,
+      fileContent
+    ) => {
+      try {
+        let conn = await mssql.connect(config);
+        let result1 = await conn
+          .request()
+          .input(
+            "AI_Hist_PhotographAttachmentsID",
+            mssql.BigInt,
+            aiHistPhotoGraphAttachmentID
+          )
+          .input("VesselId", mssql.Int, vesselID)
+          .input("Description", mssql.VarChar(250), desc)
+          .input("FileName", mssql.VarChar(150), fileName)
+          .input("FileType", mssql.VarChar(5), fileExtension)
+          .input("OriginalFileType", mssql.VarChar(5), fileExtension)
+          .input("BlobContents", mssql.Image, fileContent)
+          .input("BlobSize", mssql.Int, fileSize)
+          .input("OriginalFileSize", mssql.Int, fileSize)
+          .input("AddedOn", mssql.DateTime, new Date())
+          .input("IsUploaded", mssql.Int, 1)
+          .execute("usp_AI_RN_UpdatePhotoGraphToDB");
+        mssql.close();
+        res.send("ok");
+      } catch (err) {
+        console.log("err---->>>>>" + err);
+        mssql.close();
+      }
+    };
+
+    var editFileInAzure = async (
+      req,
+      res,
+      aiHistPhotoGraphAttachmentID,
+      desc,
+      fileName,
+      fileExtension,
+      fileSize,
+      companyID,
+      vesselID,
+      tableName,
+      newpath,
+      fileContent
+    ) => {
+      fs.readFile(newpath, async function(err, data) {
+        if (!err) {
+          try {
+            let conn = await mssql.connect(config);
+            let result1 = await conn
+              .request()
+              .input(
+                "AI_Hist_PhotographAttachmentsID",
+                mssql.BigInt,
+                aiHistPhotoGraphAttachmentID
+              )
+              .input("VesselId", mssql.Int, vesselID)
+              .input("Description", mssql.VarChar(250), desc)
+              .input("FileName", mssql.VarChar(150), fileName)
+              .input("FileType", mssql.VarChar(5), fileExtension)
+              .input("OriginalFileType", mssql.VarChar(5), fileExtension)
+              .input("BlobContents", mssql.Image, null)
+              .input("BlobSize", mssql.Int, fileSize)
+              .input("OriginalFileSize", mssql.Int, fileSize)
+              .input("AddedOn", mssql.DateTime, new Date())
+              .input("IsUploaded", mssql.Int, 1)
+              .execute("usp_AI_RN_UpdatePhotoGraphToDB");
+            mssql.close();
+
+            //Creating blob service for read,create ,delete & update files from azure.
+            var blobService = azure.createBlobService(
+              storageAccount,
+              accessKey
+            );
+            var t = "unable to connect";
+            blobService.createContainerIfNotExists(container, function(
+              error,
+              result,
+              response
+            ) {
+              if (!error) {
+                t = "could connec t to conatiner...";
+                console.log("Connecting blob..");
+
+                // blobService.createBlockBlobFromStream(container: string, blob: string,
+                //  stream: internal.Readable, streamLength: number, callback: azurestorage)
+                blobService.createBlockBlobFromStream(
+                  container,
+                  "AI_HistPhotoGraph_" +
+                    aiHistPhotoGraphAttachmentID +
+                    fileName, //filename
+
+                  fs.createReadStream(newpath),
+                  data.length,
+                  function(error, result, response) {
+                    if (error) {
+                      console.log("Couldn't upload stream");
+                      console.error(error);
+                    } else {
+                      fs.unlink(newpath, function(err) {
+                        if (err && err.code == "ENOENT") {
+                          // file doens't exist
+                          console.info("File doesn't exist, won't remove it.");
+                        } else if (err) {
+                          // other errors, e.g. maybe we don't have enough permission
+                          console.error(
+                            "Error occurred while trying to remove file"
+                          );
+                        } else {
+                          console.info(`removed`);
+                        }
+                      });
+
+                      console.log("Stream uploaded successfully");
+                    }
+                  }
+                );
+              }
+              console.log("uploaded..");
+              res.send(result1.output.Newai_HistPhotoGraphID);
+              // res.writeHead(200, { 'content-type': 'text/plain' });
+              // res.write('received fields:\n\n ' + util.inspect(fields));
+              // res.write('\n\n');
+              // res.end('received files:\n\n ' + util.inspect(files));
+              // res.sendStatus(200);
+            });
+          } catch (err) {
+            console.log("err---->>>>>" + err);
+            mssql.close();
+          }
+        }
+      });
+    };
   }
 };
 
 var GetStorageOption = async (C_CompanyID, VesselID, TableName, cb) => {
+  // cb --> callback --> (data,err)=>{}
   try {
     let conn = await mssql.connect(config);
     let result1 = await conn
@@ -341,7 +549,11 @@ var GetStorageOption = async (C_CompanyID, VesselID, TableName, cb) => {
       .input("TableName", mssql.VarChar(120), TableName)
       .execute("ai_GetStorageOption");
     mssql.close();
-    cb(result1.recordset);
+    console.log(result1.recordset);
+    //test storage option database/ cloud; directly  Hardcoded
+    var data = [{ HQ_Storage_Option: "database" }];
+
+    cb(data);
   } catch (err) {
     console.log("error => ..." + err);
   }
