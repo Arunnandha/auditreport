@@ -13,8 +13,6 @@ class PhotoGraphs extends Component {
   constructor() {
     super();
     this.state = {
-      blobs: [],
-      layout: "grid",
       selectedFile: null,
       activeAiAttachmentId: -1,
       description: "",
@@ -23,22 +21,23 @@ class PhotoGraphs extends Component {
       selectedImage: "",
       visible: false,
       viewDialog: false,
-      delDialogvisible: false
+      delDialogvisible: false,
+      enableAddBtn: false
     };
-    this.itemTemplate = this.itemTemplate.bind(this);
   }
 
-  // componentDidMount() {
-  //   this.btnSubmit.focus();
-  // }
+  componentDidMount() {
+    this.enableDisabelAddBtn();
+  }
 
   componentWillReceiveProps(props) {
-    this.setState({ blobs: props.BlobContents });
+    this.setState({ blobs: props.blobContent });
+    this.enableDisabelAddBtn();
   }
 
-  itemTemplate(blobs, layout) {
+  itemTemplate = (blobs, layout) => {
     if (layout === "grid") return this.renderGridItem(blobs);
-  }
+  };
 
   renderGridItem(blobs) {
     if (blobs.BlobContents === null) return null;
@@ -120,6 +119,7 @@ class PhotoGraphs extends Component {
           {/* click to open add Attachments dialog box */}
           <button
             className="btn btn-info btn-sm"
+            disabled={this.state.enableAddBtn}
             onClick={() => {
               this.setState({ visible: true, callMode: "NEW" });
             }}
@@ -260,6 +260,14 @@ class PhotoGraphs extends Component {
     this.setState({ visible: false, description: "" });
     this.fileInput.value = "";
   };
+
+  enableDisabelAddBtn() {
+    if (this.props.blobContent.length >= 10) {
+      this.setState({ enableAddBtn: true });
+    } else {
+      this.setState({ enableAddBtn: false });
+    }
+  }
 
   render() {
     const header = this.renderHeader();
