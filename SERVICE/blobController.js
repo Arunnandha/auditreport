@@ -2,10 +2,12 @@ var mssql = require("mssql");
 var azure = require("azure-storage");
 var fs = require("fs");
 //
-var configFile = require("./sensitiveData/config");
+var configFile = require("./config/config");
+
 var config = configFile.config;
 //Paste Azure details
-var azureDetails = require("./sensitiveData/azureDetails");
+var azureDetails = require("./config/azureDetails");
+
 var accessKey = azureDetails.accessKey;
 var storageAccount = azureDetails.storageAccount;
 var container = azureDetails.container;
