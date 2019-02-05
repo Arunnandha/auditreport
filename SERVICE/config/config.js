@@ -1,6 +1,6 @@
 module.exports = {
   config: {
-    user: "",
+    user: "sa",
     password: "",
     port: "",
     server: "",
