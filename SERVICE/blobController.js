@@ -21,11 +21,11 @@ module.exports = {
     fileSize,
     companyID,
     tableName,
-    vesselID,
+    VesselID,
     filepath
   ) => {
     //last parameter is a function
-    GetStorageOption(companyID, vesselID, tableName, (data, err) => {
+    GetStorageOption(companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
 
@@ -47,7 +47,8 @@ module.exports = {
             fileName,
             fileExtension,
             fileContent,
-            fileSize
+            fileSize,
+            VesselID
           );
         } else if (strHQ_Storage_Option == "Cloud") {
           uploadFileToAzure(
@@ -58,7 +59,8 @@ module.exports = {
             fileExtension,
             fileContent,
             fileSize,
-            filepath
+            filepath,
+            VesselID
           );
         } else {
           console.log("Error while retrieve storage option");
@@ -74,7 +76,8 @@ module.exports = {
       fileName,
       fileExtension,
       fileContent,
-      fileSize
+      fileSize,
+      VesselID
     ) => {
       var AI_HistPhotoGraphID = 0;
       try {
@@ -82,7 +85,7 @@ module.exports = {
         let result1 = await conn
           .request()
           .input("Origin", mssql.VarChar(50), "VSL")
-          .input("VesselId", mssql.Int, 905)
+          .input("VesselId", mssql.Int, VesselID)
           .input("AI_HistID", mssql.BigInt, 60)
           .input("RefKeyWord", mssql.VarChar(25), "PhotographAttachment")
           .input("Purpose", mssql.VarChar(50), "")
@@ -125,7 +128,8 @@ module.exports = {
       fileExtension,
       fileContent,
       fileSize,
-      filepath
+      filepath,
+      VesselID
     ) => {
       var AI_HistPhotoGraphID = 0;
       var result1;
@@ -137,7 +141,7 @@ module.exports = {
             result1 = await conn
               .request()
               .input("Origin", mssql.VarChar(50), "VSL")
-              .input("VesselId", mssql.Int, 905)
+              .input("VesselId", mssql.Int, VesselID)
               .input("AI_HistID", mssql.BigInt, 60)
               .input("RefKeyWord", mssql.VarChar(25), "PhotographAttachment")
               .input("Purpose", mssql.VarChar(50), "")
@@ -230,8 +234,8 @@ module.exports = {
       });
     };
   },
-  downloadFile: (req, res, companyID, vesselID, tableName, histID) => {
-    GetStorageOption(companyID, vesselID, tableName, (data, err) => {
+  downloadFile: (req, res, companyID, VesselID, tableName, histID) => {
+    GetStorageOption(companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
         console.log(
@@ -342,12 +346,12 @@ module.exports = {
     fileExtension,
     fileSize,
     companyID,
-    vesselID,
+    VesselID,
     tableName,
     newpath,
     fileContent
   ) => {
-    GetStorageOption(companyID, vesselID, tableName, (data, err) => {
+    GetStorageOption(companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
         console.log(
@@ -365,7 +369,7 @@ module.exports = {
             fileExtension,
             fileSize,
             companyID,
-            vesselID,
+            VesselID,
             tableName,
             newpath,
             fileContent
@@ -380,7 +384,7 @@ module.exports = {
             fileExtension,
             fileSize,
             companyID,
-            vesselID,
+            VesselID,
             tableName,
             newpath,
             fileContent
@@ -400,7 +404,7 @@ module.exports = {
       fileExtension,
       fileSize,
       companyID,
-      vesselID,
+      VesselID,
       tableName,
       newpath,
       fileContent
@@ -414,7 +418,7 @@ module.exports = {
             mssql.BigInt,
             aiHistPhotoGraphAttachmentID
           )
-          .input("VesselId", mssql.Int, vesselID)
+          .input("VesselId", mssql.Int, VesselID)
           .input("Description", mssql.VarChar(250), desc)
           .input("FileName", mssql.VarChar(150), fileName)
           .input("FileType", mssql.VarChar(5), fileExtension)
@@ -442,7 +446,7 @@ module.exports = {
       fileExtension,
       fileSize,
       companyID,
-      vesselID,
+      VesselID,
       tableName,
       newpath,
       fileContent
@@ -458,7 +462,7 @@ module.exports = {
                 mssql.BigInt,
                 aiHistPhotoGraphAttachmentID
               )
-              .input("VesselId", mssql.Int, vesselID)
+              .input("VesselId", mssql.Int, VesselID)
               .input("Description", mssql.VarChar(250), desc)
               .input("FileName", mssql.VarChar(150), fileName)
               .input("FileType", mssql.VarChar(5), fileExtension)
