@@ -243,7 +243,8 @@ class PhotoGraphs extends Component {
         this.state.selectedFile.name,
         this.state.description,
         this.props.VesselID,
-        this.props.Origin
+        this.props.Origin,
+        this.props.HistID
       );
     else {
       this.props.handleEditBlob(
@@ -320,7 +321,8 @@ const mapStateToProps = state => {
   return {
     blobContent: state.blobContent,
     VesselID: state.AIdetails.VesselID,
-    Origin: state.AIdetails.Origin
+    Origin: state.AIdetails.Origin,
+    HistID: state.histID
   };
 };
 
@@ -333,7 +335,8 @@ const dispatchAction = dispatch => {
       selectedFileName,
       description,
       VesselID,
-      Origin
+      Origin,
+      HistID
     ) =>
       dispatch(
         handleUpload(
@@ -341,7 +344,8 @@ const dispatchAction = dispatch => {
           selectedFileName,
           description,
           VesselID,
-          Origin
+          Origin,
+          HistID
         )
       ),
     handleEditBlob: (

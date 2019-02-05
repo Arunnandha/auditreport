@@ -25,7 +25,8 @@ module.exports = {
     tableName,
     VesselID,
     filepath,
-    Origin
+    Origin,
+    histID
   ) => {
     //last parameter is a function
     GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
@@ -51,7 +52,8 @@ module.exports = {
             fileExtension,
             fileContent,
             fileSize,
-            VesselID
+            VesselID,
+            histID
           );
         } else if (strHQ_Storage_Option == "Cloud") {
           uploadFileToAzure(
@@ -63,7 +65,8 @@ module.exports = {
             fileContent,
             fileSize,
             filepath,
-            VesselID
+            VesselID,
+            histID
           );
         } else {
           console.log("Error while retrieve storage option");
@@ -80,7 +83,8 @@ module.exports = {
       fileExtension,
       fileContent,
       fileSize,
-      VesselID
+      VesselID,
+      histID
     ) => {
       var AI_HistPhotoGraphID = 0;
       try {
@@ -89,7 +93,7 @@ module.exports = {
           .request()
           .input("Origin", mssql.VarChar(50), "VSL")
           .input("VesselId", mssql.Int, VesselID)
-          .input("AI_HistID", mssql.BigInt, 60)
+          .input("AI_HistID", mssql.BigInt, histID)
           .input("RefKeyWord", mssql.VarChar(25), "PhotographAttachment")
           .input("Purpose", mssql.VarChar(50), "")
           .input("Description", mssql.VarChar(250), desc)
@@ -132,7 +136,8 @@ module.exports = {
       fileContent,
       fileSize,
       filepath,
-      VesselID
+      VesselID,
+      histID
     ) => {
       var AI_HistPhotoGraphID = 0;
       var result1;
@@ -145,7 +150,7 @@ module.exports = {
               .request()
               .input("Origin", mssql.VarChar(50), "VSL")
               .input("VesselId", mssql.Int, VesselID)
-              .input("AI_HistID", mssql.BigInt, 60)
+              .input("AI_HistID", mssql.BigInt, histID)
               .input("RefKeyWord", mssql.VarChar(25), "PhotographAttachment")
               .input("Purpose", mssql.VarChar(50), "")
               .input("Description", mssql.VarChar(250), desc)

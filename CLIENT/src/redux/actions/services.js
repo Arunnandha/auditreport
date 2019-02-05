@@ -46,7 +46,8 @@ export const handleUpload = (
   fileName,
   description,
   vesselID,
-  Origin
+  Origin,
+  HistID
 ) => {
   return dispatch => {
     let data = new FormData();
@@ -55,6 +56,7 @@ export const handleUpload = (
     data.append("description", description);
     data.append("VesselID", vesselID);
     data.append("Origin", Origin);
+    data.append("HistID", HistID);
     // data.append("fileExtension", fileExtension);
     let config = {
       headers: {

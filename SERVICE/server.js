@@ -109,6 +109,7 @@ app.post("/upLoadImageFile", async (req, res) => {
     var companyID = 1;
     var VesselID = fields.VesselID;
     var Origin = fields.Origin;
+    var histID = fields.HistID;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -129,7 +130,8 @@ app.post("/upLoadImageFile", async (req, res) => {
           tableName,
           VesselID,
           newpath,
-          Origin
+          Origin,
+          histID
         );
       });
 
