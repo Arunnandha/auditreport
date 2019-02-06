@@ -42,7 +42,6 @@ module.exports = {
         //If cloud attachment only present in clould other details shared in database.
 
         if (strHQ_Storage_Option.toUpperCase() == "database".toUpperCase()) {
-          // if ("database") {
           console.log("strHQ_Storage_Option + " + strHQ_Storage_Option);
           uploadFileToDB(
             req,
@@ -230,11 +229,6 @@ module.exports = {
             }
             console.log("uploaded..");
             res.send(result1.output.Newai_HistPhotoGraphID);
-            // res.writeHead(200, { 'content-type': 'text/plain' });
-            // res.write('received fields:\n\n ' + util.inspect(fields));
-            // res.write('\n\n');
-            // res.end('received files:\n\n ' + util.inspect(files));
-            // res.sendStatus(200);
           });
         } else {
           console.log(err);
@@ -250,7 +244,6 @@ module.exports = {
           "strHQ_Storage_Option before call :+ " + strHQ_Storage_Option
         );
         if (strHQ_Storage_Option.toUpperCase() == "database".toUpperCase()) {
-          // if ("database") {
           console.log("strHQ_Storage_Option + " + strHQ_Storage_Option);
           downloadFileFromDB(req, res, histID);
         } else if (strHQ_Storage_Option == "Cloud") {
@@ -319,13 +312,21 @@ module.exports = {
                 function(error) {
                   if (!error) {
                     var fs = require("fs");
-                    fs.readFile(downloadfilename, null, function(err, data) {
-                      sendImageFiles.push({
-                        AI_Hist_PhotographAttachmentsID: AI_Hist_PhotographAttachmentsID,
-                        FileName: FileName,
-                        Description: Description,
-                        BlobContents: Buffer.from(data).toString("base64")
-                      });
+                    fs.readFile(downloadfilename, null, async (err, data) => {
+                      try {
+                        var blobContents = await Buffer.from(data).toString(
+                          "base64"
+                        );
+                        sendImageFiles.push({
+                          AI_Hist_PhotographAttachmentsID: AI_Hist_PhotographAttachmentsID,
+                          FileName: FileName,
+                          Description: Description,
+                          BlobContents: blobContents
+                        });
+                      } catch (error) {
+                        console.log("Error from download file from  azure");
+                      }
+
                       if (err) {
                         return console.log(err);
                       }
@@ -367,7 +368,6 @@ module.exports = {
           "strHQ_Storage_Option before call :+ " + strHQ_Storage_Option
         );
         if (strHQ_Storage_Option.toUpperCase() == "database".toUpperCase()) {
-          // if ("database") {
           console.log("strHQ_Storage_Option + " + strHQ_Storage_Option);
           editFileInDB(
             req,

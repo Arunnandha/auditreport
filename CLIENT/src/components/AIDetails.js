@@ -25,6 +25,9 @@ class AIDetails extends Component {
       NoOfDefectAdded: 0
     }
   };
+
+  //capture Redux state's AI details into local state
+  //local state used here for manipulation purpose
   componentWillReceiveProps(props) {
     this.setState({ AI_Details: props.AI_Details });
   }
@@ -68,12 +71,14 @@ class AIDetails extends Component {
                         )
                   }
                   onChange={e => {
+                    //  local state update
                     this.setState({
                       AI_Details: {
                         ...this.state.AI_Details,
                         AuditInspection_StartDate: e.target.value.toLocaleDateString()
                       }
                     });
+                    // It triggers the "EditedAIdetails" action creator
                     this.props.EditAIdetails({
                       AuditInspection_StartDate: e.target.value.toLocaleDateString()
                     });

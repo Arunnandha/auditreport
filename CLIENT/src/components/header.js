@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getAIdetailsFromDB } from "../redux/actions/services.js";
 import "../css/header.css";
-import { updateAIdetailsFromDB } from "../redux/actions/services";
+import { updateAIdetailsToDB } from "../redux/actions/services";
 
 class Header extends Component {
   histID;
+  //get hist id from input text box
   getHistID = data => {
     this.histID = data.target.value;
   };
@@ -22,6 +23,7 @@ class Header extends Component {
           />
           <button
             className="btn btn-outline-secondary ml-2 "
+            // It triggers the "getAIdetailsFromD" action creator
             onClick={() => this.props.getAIdetails(this.histID)}
           >
             Retrieve
@@ -38,9 +40,9 @@ class Header extends Component {
               {this.props.AI_Details.StatusString}
             </div>
             <div className="col-4">
-              {/* call update Action creator  */}
               <button
                 className="btn btn-outline-success m-2"
+                // It triggers the "updateAIdetailsToDB" action creator
                 onClick={() =>
                   this.props.updateAIdetails(
                     this.props.AI_Details,
@@ -74,7 +76,7 @@ const dispatchAction = dispatch => {
   return {
     getAIdetails: histID => dispatch(getAIdetailsFromDB(histID)),
     updateAIdetails: (updatedDetails, HistId) =>
-      dispatch(updateAIdetailsFromDB(updatedDetails, HistId))
+      dispatch(updateAIdetailsToDB(updatedDetails, HistId))
   };
 };
 export default connect(

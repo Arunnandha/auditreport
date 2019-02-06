@@ -1,6 +1,7 @@
 import * as action from "./action-types";
 import axios from "axios";
 
+//get AI details
 export const getAIdetailsFromDB = histID => {
   return dispatch => {
     axios
@@ -22,7 +23,8 @@ export const getAIdetailsFromDB = histID => {
   };
 };
 
-export const updateAIdetailsFromDB = (updatedDetails, histID) => {
+// update AIdetails -- Edited details got from header component
+export const updateAIdetailsToDB = (updatedDetails, histID) => {
   return dispatch => {
     axios
       .post(`http://localhost:5000/updateAIdetails/`, {
@@ -57,12 +59,12 @@ export const handleUpload = (
     data.append("VesselID", vesselID);
     data.append("Origin", Origin);
     data.append("HistID", HistID);
-    // data.append("fileExtension", fileExtension);
     let config = {
       headers: {
         "Content-Type": "multipart/form-data"
       }
     };
+    //convert local image file into base64
     var NewImagebase64 = "";
     var file = imgFile;
     var reader = new FileReader();
@@ -71,11 +73,13 @@ export const handleUpload = (
       NewImagebase64 = reader.result.split("base64,").pop();
     };
 
+    //upload new photograph and get new "aiHistAttachmentID".
     axios
       .post(`http://localhost:5000/upLoadImageFile/`, data, config)
       .then(res => {
         let aiHistAttachmentID = res.data;
         console.log(res.data);
+        //when got response from upLoadImageFile, newly added photograph will render in client
         dispatch({
           type: action.UPLOAD_PHOTOGRAPH,
           payload: { aiHistAttachmentID, NewImagebase64, fileName, description }
@@ -84,6 +88,7 @@ export const handleUpload = (
   };
 };
 
+//download  photograph from db/azure
 export const getAIHistAttachment = (histID, VesselID, Origin, dispatch) => {
   axios
     .get(
@@ -100,6 +105,7 @@ export const getAIHistAttachment = (histID, VesselID, Origin, dispatch) => {
     });
 };
 
+//delete photograph attachment
 export const deleteAttachment = aiHistAttachmentID => {
   return dispatch => {
     axios
@@ -118,6 +124,7 @@ export const deleteAttachment = aiHistAttachmentID => {
   };
 };
 
+//update the Edited photograph attachment details
 export const handleEditUpload = (
   editaiImagebase64File,
   editFileName,
@@ -138,7 +145,7 @@ export const handleEditUpload = (
         "Content-Type": "multipart/form-data"
       }
     };
-
+    //convert local image file into base64
     var NewImagebase64File = "";
     var reader = new FileReader();
     reader.readAsDataURL(editaiImagebase64File);
@@ -149,6 +156,7 @@ export const handleEditUpload = (
     axios
       .post(`http://localhost:5000/editUploadImageFile/`, data, config)
       .then(res => {
+        //when got response from upLoadImageFile, newly added photograph will render in client
         dispatch({
           type: action.EDIT_PHOTOGRAPH,
           payload: {
