@@ -1,9 +1,9 @@
 module.exports = {
   config: {
-    user: "sa",
+    user: "",
     password: "",
-    port: "",
-    server: "",
+    port: 1433,
+    server: "\\",
     database: "",
     options: {
       encrypt: true
