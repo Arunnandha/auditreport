@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "../css/App.css";
-import Header from "./Header.js";
+import Header from "./header.js";
 import AIDetails from "./AIDetails.js";
 import ReportAndObservation from "./ReportAndObservation.js";
 import ErrorBoundary from "./HandleErrorComponent.js";
