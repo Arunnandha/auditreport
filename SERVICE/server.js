@@ -5,6 +5,7 @@ var cors = require("cors");
 const bodyParser = require("body-parser");
 var formidable = require("formidable");
 var fs = require("fs");
+var jwt = require("jsonwebtoken");
 var blobControl = require("./blobController");
 
 var configFile = require("./config/config");
@@ -13,6 +14,11 @@ var config = configFile.config;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+
+var securitySettings = {
+  secretkey: "my_secret_key",
+  port: 8086
+};
 
 app.get("/getAIdetails/:histID", async (req, res) => {
   var histID = req.params.histID;
@@ -217,6 +223,55 @@ app.post("/editUploadImageFile/", async (req, res) => {
 
 mssql.on("error", err => {
   // ... error handler
+});
+
+app.get("/checkUserDetails/:userName/:password/:VesselID", async (req, res) => {
+  var userName = req.params.userName;
+  var passWord = req.params.password;
+  var vesselID = req.params.VesselID;
+  var isHqUser = false;
+  var qryStr = "";
+  var exp = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  isHqUser = exp.test(String(userName).toLowerCase());
+  if (isHqUser) {
+    qryStr = `select WinLoginEmailID,UserName,Role,Designation,UserPassword 
+    from HQ_Users where WinLoginEmailID = '${userName}' 
+    and UserPassword = '${passWord}'`;
+  } else {
+    qryStr = `select username, UserRank, userID, Fleet_CrewID, Password 
+    from Fleet_Crew
+    where Fleet_CrewID = ${userName}
+    and Password = '${passWord}'
+    and VesselID = ${vesselID}`;
+  }
+  try {
+    let conn = await mssql.connect(config);
+    let result1 = await conn.request().query(qryStr);
+    mssql.close();
+    if (result1.recordset.length > 0) {
+      res.json({
+        userinfo: result1.recordset,
+        token: jwt.sign({ passWord }, securitySettings.secretkey)
+      });
+    } else res.sendStatus(400);
+  } catch (err) {
+    console.log("err---->>>>>" + err);
+    mssql.close();
+  }
+});
+
+app.get("/getVslCode/", async (req, res) => {
+  try {
+    let conn = await mssql.connect(config);
+    let result1 = await conn
+      .request()
+      .query(`select VesselID,VslCode from V_Vessels order by VslName`);
+    mssql.close();
+    res.send(result1.recordset);
+  } catch (err) {
+    console.log("err---->>>>>" + err);
+    mssql.close();
+  }
 });
 
 app.listen(5000, () => {
