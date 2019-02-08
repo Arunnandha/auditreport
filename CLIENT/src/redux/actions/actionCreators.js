@@ -1,10 +1,10 @@
-import * as action from "./action-types";
+import { action_contants } from "./action-types";
 
 // when AI details edited It will triggered
 export const EditedAIdetails = eidtedDetails => {
   return dispatch => {
     dispatch({
-      type: action.EDIT_AI_DETAILS,
+      type: action_contants.EDIT_AI_DETAILS,
       EditAIdetails: eidtedDetails
     });
   };
@@ -14,7 +14,7 @@ export const EditedAIdetails = eidtedDetails => {
 export const errorLogAC = (error, errorInfo) => {
   return dispatch => {
     dispatch({
-      type: action.LOGGING_ERR,
+      type: action_contants.LOGGING_ERR,
       errDetails: { errorMsg: error.message, errorInfo: errorInfo }
     });
   };

@@ -1,3 +1,5 @@
+import { action_contants } from "../actions/action-types";
+
 const initState = {
   histID: 0,
   AIdetails: {
@@ -18,7 +20,8 @@ const initState = {
     DelivDate: new Date(),
     ImoNo: "",
     NoOfDefectAdded: 0,
-    VesselID: -1
+    VesselID: -1,
+    AI_AuditDetails: []
   },
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
@@ -27,19 +30,24 @@ const initState = {
 
 const reducer = (state = initState, action) => {
   switch (action.type) {
-    case "GET_AI_DETAILS":
+    case action_contants.GET_AUDIT_DETAILS:
+      return {
+        ...state,
+        AI_AuditDetails: action.payload
+      };
+    case action_contants.GET_AI_DETAILS:
       return {
         ...state,
         histID: action.histID,
         AIdetails: action.AIdetails,
         isNewReport: false
       };
-    case "UPDATE_AI_DETAILS":
+    case action_contants.UPDATE_AI_DETAILS:
       //update AI details from previous state
       // ( redux store state updated using EDIT_AI_DETAILS )
       // state.AIdetails = { ...state.AIdetails};
       break;
-    case "LOGGING_ERR":
+    case action_contants.LOGGING_ERR:
       return {
         ...state,
         error: {
@@ -49,7 +57,7 @@ const reducer = (state = initState, action) => {
         }
       };
 
-    case "EDIT_AI_DETAILS":
+    case action_contants.EDIT_AI_DETAILS:
       let key = Object.keys(action.EditAIdetails);
       return {
         ...state,
@@ -59,12 +67,12 @@ const reducer = (state = initState, action) => {
         },
         isNewReport: false
       };
-    case "GET_BLOB":
+    case action_contants.GET_BLOB:
       return {
         ...state,
         blobContent: action.blobContents
       };
-    case "DELETE_PHOTOGRAPH":
+    case action_contants.DELETE_PHOTOGRAPH:
       const blobsData = [...state.blobContent];
       const filteredBlobs = blobsData.filter(
         item => item.AI_Hist_PhotographAttachmentsID !== action.payload
@@ -73,7 +81,7 @@ const reducer = (state = initState, action) => {
         ...state,
         blobContent: filteredBlobs
       };
-    case "UPLOAD_PHOTOGRAPH":
+    case action_contants.UPLOAD_PHOTOGRAPH:
       const {
         aiHistAttachmentID,
         NewImagebase64,
@@ -94,7 +102,7 @@ const reducer = (state = initState, action) => {
         blobContent: newBlobData
       };
 
-    case "EDIT_PHOTOGRAPH":
+    case action_contants.EDIT_PHOTOGRAPH:
       const {
         editaiAttachmentId,
         NewImagebase64File,

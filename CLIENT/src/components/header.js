@@ -6,29 +6,25 @@ import { updateAIdetailsToDB } from "../redux/actions/services";
 
 class Header extends Component {
   histID;
-  //get hist id from input text box
-  getHistID = data => {
-    this.histID = data.target.value;
-  };
+  flag;
+  constructor() {
+    super();
+    //get flag and histID from URL
+    var url = window.location.href;
+    var arr = url.split("/");
+    this.histID = arr[5];
+    this.flag = arr[4];
+  }
+  componentDidMount() {
+    if (this.histID == -1) {
+      alert(this.flag);
+    } else {
+      this.props.getAIdetails(this.histID);
+    }
+  }
   render() {
     return (
       <div>
-        <div style={{ textAlign: "center" }}>
-          <label>Hist ID:</label>
-          <input
-            className="input-lg"
-            type="text"
-            placeholder="Enter Hist ID"
-            onChange={e => this.getHistID(e)}
-          />
-          <button
-            className="btn btn-outline-secondary ml-2 "
-            // It triggers the "getAIdetailsFromD" action creator
-            onClick={() => this.props.getAIdetails(this.histID)}
-          >
-            Retrieve
-          </button>
-        </div>
         <div className="container-fluid my-2 background">
           <div style={{ border: "1px solid" }} className="row">
             <div className="col-3 mt-3">
@@ -67,8 +63,8 @@ class Header extends Component {
 
 const mapStateToProps = state => {
   return {
-    AI_Details: state.AIdetails,
-    HistId: state.histID
+    AI_Details: state.reducer.AIdetails,
+    HistId: state.reducer.histID
   };
 };
 

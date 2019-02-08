@@ -1,6 +1,6 @@
-import * as action from "./action-types";
+import { action_contants } from "./action-types";
 import axios from "axios";
-import { history } from "../../components/App";
+import { history } from "../../index";
 
 export const checkValidUser = (userName, password, VesselID) => {
   return dispatch => {
@@ -11,7 +11,7 @@ export const checkValidUser = (userName, password, VesselID) => {
       .then(res => {
         console.log(res.data, VesselID);
         dispatch({
-          type: action.SUCCESS,
+          type: action_contants.SUCCESS,
           userDetails: res.data.userinfo[0],
           vesselID: VesselID
         });
@@ -21,7 +21,7 @@ export const checkValidUser = (userName, password, VesselID) => {
       .catch(err => {
         console.log(err);
         dispatch({
-          type: action.LOGIN_ERROR,
+          type: action_contants.LOGIN_ERROR,
           alert: {
             alertType: "alert-danger",
             alertMsg: "Invalid User name or Password!"
@@ -37,7 +37,7 @@ export const getVslCode = () => {
       .get(`http://localhost:5000/getVslCode/`)
       .then(res => {
         dispatch({
-          type: action.GETVSLCODE,
+          type: action_contants.GETVSLCODE,
           vslCode: res.data
         });
       })
