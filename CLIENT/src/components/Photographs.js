@@ -92,7 +92,7 @@ class PhotoGraphs extends Component {
                 });
               }}
             >
-              <i class="fa fa-eye" aria-hidden="true" />
+              <i className="fa fa-eye" aria-hidden="true" />
             </button>
           </Panel>
         </div>
@@ -319,10 +319,10 @@ class PhotoGraphs extends Component {
 
 const mapStateToProps = state => {
   return {
-    blobContent: state.blobContent,
-    VesselID: state.AIdetails.VesselID,
-    Origin: state.AIdetails.Origin,
-    HistID: state.histID
+    blobContent: state.reducer.blobContent,
+    VesselID: state.reducer.AIdetails.VesselID,
+    Origin: state.reducer.AIdetails.Origin,
+    HistID: state.reducer.histID
   };
 };
 

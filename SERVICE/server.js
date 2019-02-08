@@ -5,20 +5,17 @@ var cors = require("cors");
 const bodyParser = require("body-parser");
 var formidable = require("formidable");
 var fs = require("fs");
-var jwt = require("jsonwebtoken");
 var blobControl = require("./blobController");
-
+var jwt = require("jsonwebtoken");
 var configFile = require("./config/config");
 var config = configFile.config;
+var securitySettings = {
+  secretkey: "my_secret_key"
+};
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
-
-var securitySettings = {
-  secretkey: "my_secret_key",
-  port: 8086
-};
 
 app.get("/getAIdetails/:histID", async (req, res) => {
   var histID = req.params.histID;
@@ -220,11 +217,6 @@ app.post("/editUploadImageFile/", async (req, res) => {
     });
   });
 });
-
-mssql.on("error", err => {
-  // ... error handler
-});
-
 app.get("/checkUserDetails/:userName/:password/:VesselID", async (req, res) => {
   var userName = req.params.userName;
   var passWord = req.params.password;
@@ -272,6 +264,27 @@ app.get("/getVslCode/", async (req, res) => {
     console.log("err---->>>>>" + err);
     mssql.close();
   }
+});
+app.post("/getAuditDetails", async (req, res) => {
+  var VesselID = req.body.VesselID;
+  try {
+    let conn = await mssql.connect(config);
+    let result1 = await conn
+      .request()
+      .query(
+        `select  A.AI_HistID, S.StatusCode, S.StatusString from AI_Hist A,AI_Status S where A.VesselID=${VesselID} and S.AI_StatusID=A.AI_StatusID`
+      );
+    mssql.close();
+
+    res.send(result1.recordset);
+  } catch (err) {
+    console.log("err---->>>>>" + err);
+    mssql.close();
+  }
+});
+
+mssql.on("error", err => {
+  // ... error handler
 });
 
 app.listen(5000, () => {

@@ -33,7 +33,7 @@ class ErrorBoundary extends Component {
 
 const mapStateToProps = state => {
   return {
-    errDetails: state.error
+    errDetails: state.reducer.error
   };
 };
 const dispatchAction = dispatch => {

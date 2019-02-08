@@ -326,9 +326,9 @@ class AIDetails extends Component {
 const mapStateToProps = state => {
   console.log("state from AIdetails comp:", state);
   return {
-    AI_Details: state.AIdetails,
-    HistIdFromState: state.histID,
-    isNewReport: state.isNewReport
+    AI_Details: state.reducer.AIdetails,
+    HistIdFromState: state.reducer.histID,
+    isNewReport: state.reducer.isNewReport
   };
 };
 

@@ -1,3 +1,5 @@
+import { action_contants } from "../actions/action-types";
+
 const initState = {
   userDetails: {},
   vslCodeList: [],
@@ -8,27 +10,22 @@ const initState = {
 
 const loginReducer = (state = initState, action) => {
   switch (action.type) {
-    case "GETVSLCODE":
+    case action_contants.GETVSLCODE:
       return {
         ...state,
         vslCodeList: action.vslCode
       };
-    case "LOGIN_ERROR":
+    case action_contants.LOGIN_ERROR:
       return {
         ...state,
         alert: action.alert,
         isToShowAlert: true
       };
-    case "SUCCESS":
+    case action_contants.SUCCESS:
       return {
         ...state,
         userDetails: action.userDetails,
         vesselID: action.vesselID
-      };
-
-    case "xxx":
-      return {
-        ...state
       };
   }
 
