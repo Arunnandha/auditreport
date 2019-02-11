@@ -4,18 +4,23 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getAduitDetailsFromDB } from "../redux/actions/services.js";
+import {
+  getAduitDetailsFromDB,
+  getNewModeDetailsFromDB
+} from "../redux/actions/services.js";
+import { history } from "../index";
 class auditTypes extends Component {
   // get vessel code
   //create action for get Audit details for correspng vsl code
   //set flag new/edit
+
   state = {
     visible: false,
     type: "All"
   };
 
   actionTemplate = (rowData, column) => {
-    return rowData.Status === "closed" ? null : (
+    return rowData.StatusCode === "Closed" ? null : (
       <Link style={{ color: "white" }} to={`/app/Edit/${rowData.AI_HistID}`}>
         <button
           className="btn btn-primary"
@@ -23,7 +28,7 @@ class auditTypes extends Component {
             console.log(rowData, column);
           }}
         >
-          click
+          Edit
         </button>
       </Link>
     );
@@ -51,6 +56,16 @@ class auditTypes extends Component {
         className="containers container-fluid "
         style={{ backgroundColor: "aquamarine" }}
       >
+        <button
+          className="btn btn-danger"
+          style={{ position: "absolute", top: "2%", left: "90%" }}
+          onClick={() => {
+            localStorage.clear();
+            history.push("/");
+          }}
+        >
+          Logout
+        </button>
         <div
           className="jumbotron"
           style={{ textAlign: "center", width: "36%" }}
@@ -128,7 +143,18 @@ class auditTypes extends Component {
               }}
             >
               <Link style={{ color: "white" }} to={`/app/new/-1`}>
-                <button className="btn btn-info ">New Audit</button>
+                <button
+                  className="btn btn-info "
+                  onClick={() => {
+                    this.props.getNewModeDetails(
+                      this.props.AI_Details,
+                      this.props.Origin,
+                      this.props.vesselID
+                    );
+                  }}
+                >
+                  New Audit
+                </button>
               </Link>
             </div>
 
@@ -142,7 +168,7 @@ class auditTypes extends Component {
                 className="btn btn-info"
                 onClick={() => {
                   this.setState({ visible: true });
-                  this.props.getAduitDetails(905);
+                  this.props.getAduitDetails(this.props.vesselID);
                 }}
               >
                 Open Audit
@@ -168,13 +194,19 @@ class auditTypes extends Component {
 const mapStateToProps = state => {
   console.log("state from AIdetails comp:", state);
   return {
-    AI_AuditDetails: state.reducer.AI_AuditDetails
+    AI_AuditDetails: state.reducer.AI_AuditDetails,
+    vesselID: state.loginReducer.vesselID,
+    Origin: state.loginReducer.userDetails.Origin,
+    AI_Details: state.reducer.AIdetails,
+    HistId: state.reducer.histID
   };
 };
 
 const dispatchAction = dispatch => {
   return {
-    getAduitDetails: vesselID => dispatch(getAduitDetailsFromDB(vesselID))
+    getAduitDetails: vesselID => dispatch(getAduitDetailsFromDB(vesselID)),
+    getNewModeDetails: (updateAIdetails, origin, vesselID) =>
+      dispatch(getNewModeDetailsFromDB(updateAIdetails, origin, vesselID))
   };
 };
 
