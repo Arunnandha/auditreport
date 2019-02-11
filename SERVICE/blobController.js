@@ -2,18 +2,18 @@ var mssql = require("mssql");
 var azure = require("azure-storage");
 var fs = require("fs");
 //
-var configFile = require("./config/config");
+var configFile = require("./config/config.jsx");
 
 var config = configFile.config;
 //Paste Azure details
-var azureDetails = require("./config/azureDetails");
+var azureDetails = require("./config/azureDetails.jsx");
 
 var accessKey = azureDetails.accessKey;
 var storageAccount = azureDetails.storageAccount;
 var container = azureDetails.container;
 
 module.exports = {
-  uploadFile: (
+  uploadFile: function(
     req,
     res,
     desc,
@@ -27,7 +27,7 @@ module.exports = {
     filepath,
     Origin,
     histID
-  ) => {
+  ) {
     //last parameter is a function
     GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
@@ -74,7 +74,7 @@ module.exports = {
     });
 
     // uploadFileToDB
-    var uploadFileToDB = async (
+    async function uploadFileToDB(
       req,
       res,
       desc,
@@ -84,7 +84,7 @@ module.exports = {
       fileSize,
       VesselID,
       histID
-    ) => {
+    ) {
       var AI_HistPhotoGraphID = 0;
       try {
         let conn = await mssql.connect(config);
@@ -120,13 +120,13 @@ module.exports = {
         mssql.close();
         res.send(result1.output.Newai_HistPhotoGraphID);
       } catch (err) {
-        console.log("err---->>>>>" + err);
+        console.log("err from upload file from db" + err);
         mssql.close();
       }
-    };
+    }
 
     //uploadFileToAzure
-    var uploadFileToAzure = (
+    function uploadFileToAzure(
       req,
       res,
       desc,
@@ -137,7 +137,7 @@ module.exports = {
       filepath,
       VesselID,
       histID
-    ) => {
+    ) {
       var AI_HistPhotoGraphID = 0;
       var result1;
       console.log("file path", filepath);
@@ -234,9 +234,17 @@ module.exports = {
           console.log(err);
         }
       });
-    };
+    }
   },
-  downloadFile: (req, res, companyID, VesselID, tableName, histID, Origin) => {
+  downloadFile: function(
+    req,
+    res,
+    companyID,
+    VesselID,
+    tableName,
+    histID,
+    Origin
+  ) {
     GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
@@ -254,13 +262,14 @@ module.exports = {
       }
     });
 
-    var downloadFileFromDB = async (req, res, histID) => {
+    async function downloadFileFromDB(req, res, histID) {
       try {
         let conn = await mssql.connect(config);
         let result1 = await conn.request()
           .query(`select AI_Hist_PhotographAttachmentsID,Description,FileName,BlobContents 
             from AI_Hist_PhotographAttachments where IsDeleted=0 and AI_HistID = ${histID}`);
         mssql.close();
+        //convert buffer data(blobcontents) into base64
         result1.recordset.forEach((element, i) => {
           if (element.BlobContents !== null) {
             result1.recordset[i].BlobContents = Buffer.from(
@@ -273,9 +282,9 @@ module.exports = {
         console.log("err---->>>>>" + err);
         mssql.close();
       }
-    };
+    }
 
-    var downloadFileFromAzure = (req, res) => {
+    function downloadFileFromAzure(req, res) {
       var blobService = azure.createBlobService(storageAccount, accessKey);
 
       blobService.createContainerIfNotExists(container, async function(
@@ -344,9 +353,9 @@ module.exports = {
           }
         }
       });
-    };
+    }
   },
-  editFile: (
+  editFile: function(
     req,
     res,
     aiHistPhotoGraphAttachmentID,
@@ -360,7 +369,7 @@ module.exports = {
     newpath,
     fileContent,
     Origin
-  ) => {
+  ) {
     GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
         var strHQ_Storage_Option = data[0].HQ_Storage_Option;
@@ -404,7 +413,7 @@ module.exports = {
       }
     });
 
-    var editFileInDB = async (
+    async function editFileInDB(
       req,
       res,
       aiHistPhotoGraphAttachmentID,
@@ -417,7 +426,7 @@ module.exports = {
       tableName,
       newpath,
       fileContent
-    ) => {
+    ) {
       try {
         let conn = await mssql.connect(config);
         let result1 = await conn
@@ -444,9 +453,9 @@ module.exports = {
         console.log("err---->>>>>" + err);
         mssql.close();
       }
-    };
+    }
 
-    var editFileInAzure = async (
+    async function editFileInAzure(
       req,
       res,
       aiHistPhotoGraphAttachmentID,
@@ -459,7 +468,7 @@ module.exports = {
       tableName,
       newpath,
       fileContent
-    ) => {
+    ) {
       fs.readFile(newpath, async function(err, data) {
         if (!err) {
           try {
@@ -547,11 +556,11 @@ module.exports = {
           }
         }
       });
-    };
+    }
   }
 };
 
-var GetStorageOption = async (Origin, C_CompanyID, VesselID, TableName, cb) => {
+async function GetStorageOption(Origin, C_CompanyID, VesselID, TableName, cb) {
   // cb --> callback --> (data,err)=>{}
   if (Origin.toUpperCase() === "VSL") {
     var data = [{ HQ_Storage_Option: "database" }];
@@ -569,7 +578,7 @@ var GetStorageOption = async (Origin, C_CompanyID, VesselID, TableName, cb) => {
       let data = result1.recordset;
       cb(data);
     } catch (err) {
-      console.log("error => ..." + err);
+      console.log("error From get Storage option=> ..." + err);
     }
   }
-};
+}
