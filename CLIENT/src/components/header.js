@@ -13,13 +13,13 @@ class Header extends Component {
     var url = window.location.href;
     var arr = url.split("/");
     this.histID = arr[5];
-    this.flag = arr[4];
+    this.flag = arr[4].toUpperCase();
   }
   componentDidMount() {
-    if (this.histID == -1) {
-      alert(this.flag);
+    if (this.histID == -1 || this.flag == "NEW") {
     } else {
       this.props.getAIdetails(this.histID);
+      //set isNewReport: false
     }
   }
   render() {
@@ -42,7 +42,11 @@ class Header extends Component {
                 onClick={() =>
                   this.props.updateAIdetails(
                     this.props.AI_Details,
-                    this.props.HistId
+                    this.props.HistId,
+                    this.props.Origin,
+                    this.props.AI_ListID,
+                    this.flag,
+                    this.props.vesselID
                   )
                 }
               >
@@ -64,15 +68,34 @@ class Header extends Component {
 const mapStateToProps = state => {
   return {
     AI_Details: state.reducer.AIdetails,
-    HistId: state.reducer.histID
+    HistId: state.reducer.histID,
+    Origin: state.loginReducer.userDetails.Origin,
+    AI_ListID: state.reducer.AIdetails.AI_ListID,
+    vesselID: state.loginReducer.vesselID
   };
 };
 
 const dispatchAction = dispatch => {
   return {
     getAIdetails: histID => dispatch(getAIdetailsFromDB(histID)),
-    updateAIdetails: (updatedDetails, HistId) =>
-      dispatch(updateAIdetailsToDB(updatedDetails, HistId))
+    updateAIdetails: (
+      updatedDetails,
+      HistId,
+      Origin,
+      AI_ListID,
+      flag,
+      vesselID
+    ) =>
+      dispatch(
+        updateAIdetailsToDB(
+          updatedDetails,
+          HistId,
+          Origin,
+          AI_ListID,
+          flag,
+          vesselID
+        )
+      )
   };
 };
 export default connect(
