@@ -7,7 +7,7 @@ var formidable = require("formidable");
 var fs = require("fs");
 var blobControl = require("./blobController");
 var jwt = require("jsonwebtoken");
-var configFile = require("./config/config");
+var configFile = require("./config/config.js");
 var config = configFile.config;
 var securitySettings = {
   secretkey: "my_secret_key"
@@ -19,7 +19,7 @@ app.use(cors());
 
 app.get("/getAIdetails/:histID", async (req, res) => {
   var histID = req.params.histID;
-  // console.log("histID", histID);
+  console.log("histID", histID);
   try {
     let conn = await mssql.connect(config);
     let result1 = await conn
@@ -39,9 +39,19 @@ mssql.on("error", err => {
   // ... error handler
 });
 app.post("/updateAIdetails/", async (req, res) => {
+  console.log("hit update");
   // console.log("updatedDetails", req.body.updatedDetails);
   var AI_Updated_details = req.body.updatedDetails;
   var histID = req.body.histID;
+  var VesselID = req.body.VesselID;
+  var Origin = req.body.Origin;
+  var AI_ListID = req.body.AI_ListID;
+  var flag = req.body.flag;
+  var New_HistID = 0;
+  console.log(flag);
+  if (flag == "EDIT") {
+    AI_ListID = -1;
+  }
 
   // console.log("histID update", req.body.histID);
   try {
@@ -87,14 +97,19 @@ app.post("/updateAIdetails/", async (req, res) => {
       .input("NoOfNCRAdded", mssql.Int, 0)
       .input("NoOfTaskAdded", mssql.Int, 0)
       .input("HasPhotographAttachments", mssql.Int, 0)
-      .input("LastActionUserID", mssql.VarChar(50), "MASTER")
+      .input("LastActionUserID", mssql.VarChar(50), "")
       .input("NoObservations", mssql.Int, 0)
       .input("AI_HistID", mssql.BigInt, histID)
-      .input("VesselID", mssql.Int, AI_Updated_details.VesselID)
+      .input("VesselID", mssql.Int, VesselID)
+      .input("Origin", mssql.VarChar(3), Origin)
+      .input("AI_ListID", mssql.Int, AI_ListID)
+      .input("callMode", mssql.VarChar(10), flag)
+      .output("new_HistID", New_HistID)
       .execute("usp_AI_RN_UpdateAIDetails");
 
     mssql.close();
-    res.send(result1.recordset);
+    console.log(result1.output.new_HistID);
+    res.send(result1.output.new_HistID);
   } catch (err) {
     console.log("err---->>>>>" + err);
     mssql.close();
@@ -151,6 +166,7 @@ app.get("/getAIPhotographs/:histID/:VesselID/:Origin", async (req, res) => {
   var companyID = 1;
   var VesselID = req.params.VesselID;
   var tableName = "AI_Hist_PhotographAttachments";
+  console.log(histID, Origin, VesselID);
   photographData = await blobControl.downloadFile(
     req,
     res,
@@ -226,11 +242,11 @@ app.get("/checkUserDetails/:userName/:password/:VesselID", async (req, res) => {
   var exp = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
   isHqUser = exp.test(String(userName).toLowerCase());
   if (isHqUser) {
-    qryStr = `select WinLoginEmailID,UserName,Role,Designation,UserPassword 
+    qryStr = `select WinLoginEmailID,UserName,Role,Designation,UserPassword ,(select case when count(VesselID) > 1 then 'HQ' else 'VSL' end as origin from V_Vessels) as Origin
     from HQ_Users where WinLoginEmailID = '${userName}' 
-    and UserPassword = '${passWord}'`;
+    and UserPassword = '${passWord}' `;
   } else {
-    qryStr = `select username, UserRank, userID, Fleet_CrewID, Password 
+    qryStr = `select username, UserRank, userID, Fleet_CrewID, Password ,(select case when count(VesselID) > 1 then 'HQ' else 'VSL' end as origin from V_Vessels) as Origin
     from Fleet_Crew
     where Fleet_CrewID = ${userName}
     and Password = '${passWord}'
@@ -265,15 +281,40 @@ app.get("/getVslCode/", async (req, res) => {
     mssql.close();
   }
 });
+
+app.post("/getNewModeDetails", async (req, res) => {
+  try {
+    var Origin = req.body.origin;
+    var VesselID = req.body.vesselID;
+
+    let conn = await mssql.connect(config);
+    let result1 = await conn
+      .request()
+      .input("origin", mssql.VarChar(3), Origin)
+      .execute("usp_AI_RN_GetNewModeDetails");
+
+    let result2 = await conn
+      .request()
+      .query(
+        `select ClassNo,Flag,DelivDate,ImoNo from V_Vessels where VesselID=${VesselID}`
+      );
+    mssql.close();
+    res.send({ desc: result1.recordset, vslDetails: result2.recordset });
+  } catch (err) {
+    console.log("err---->>>>>" + err);
+    mssql.close();
+  }
+});
+
 app.post("/getAuditDetails", async (req, res) => {
   var VesselID = req.body.VesselID;
   try {
     let conn = await mssql.connect(config);
-    let result1 = await conn
-      .request()
-      .query(
-        `select  A.AI_HistID, S.StatusCode, S.StatusString from AI_Hist A,AI_Status S where A.VesselID=${VesselID} and S.AI_StatusID=A.AI_StatusID`
-      );
+    let result1 = await conn.request().query(
+      `select  A.AI_HistID, S.StatusCode, S.StatusString
+         from AI_Hist A,AI_Status S where A.VesselID=${VesselID} 
+         and S.AI_StatusID=A.AI_StatusID`
+    );
     mssql.close();
 
     res.send(result1.recordset);
