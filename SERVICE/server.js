@@ -233,10 +233,10 @@ app.post("/editUploadImageFile/", async (req, res) => {
     });
   });
 });
-app.get("/checkUserDetails/:userName/:password/:VesselID", async (req, res) => {
-  var userName = req.params.userName;
-  var passWord = req.params.password;
-  var vesselID = req.params.VesselID;
+app.post("/checkUserDetails", async (req, res) => {
+  var userName = req.body.userName;
+  var passWord = req.body.psswd;
+  var vesselID = req.body.vesselID;
   var isHqUser = false;
   var qryStr = "";
   var exp = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
@@ -308,12 +308,14 @@ app.post("/getNewModeDetails", async (req, res) => {
 
 app.post("/getAuditDetails", async (req, res) => {
   var VesselID = req.body.VesselID;
+  var Origin = req.body.Origin;
+  console.log("origin:", Origin);
   try {
     let conn = await mssql.connect(config);
     let result1 = await conn.request().query(
-      `select  A.AI_HistID, S.StatusCode, S.StatusString
-         from AI_Hist A,AI_Status S where A.VesselID=${VesselID} 
-         and S.AI_StatusID=A.AI_StatusID`
+      `select L.Description, A.AI_HistID, S.StatusCode, S.StatusString
+      from AI_Hist A,AI_Status S,AI_List L where A.VesselID=${VesselID} 
+      and S.AI_StatusID=A.AI_StatusID and A.AI_ListID = L.AI_ListID and A.Origin='${Origin}'`
     );
     mssql.close();
 

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { getAIdetailsFromDB } from "../redux/actions/services.js";
 import "../css/header.css";
 import { updateAIdetailsToDB } from "../redux/actions/services";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
   histID;
@@ -36,22 +37,25 @@ class Header extends Component {
               {this.props.AI_Details.StatusString}
             </div>
             <div className="col-4">
-              <button
-                className="btn btn-outline-success m-2"
-                // It triggers the "updateAIdetailsToDB" action creator
-                onClick={() =>
-                  this.props.updateAIdetails(
-                    this.props.AI_Details,
-                    this.props.HistId,
-                    this.props.Origin,
-                    this.props.AI_ListID,
-                    this.flag,
-                    this.props.vesselID
-                  )
-                }
-              >
-                Save and Exit
-              </button>
+              <Link to="/" refresh="true">
+                <button
+                  className="btn btn-outline-success m-2"
+                  // It triggers the "updateAIdetailsToDB" action creator
+                  onClick={() =>
+                    this.props.updateAIdetails(
+                      this.props.AI_Details,
+                      this.props.HistId,
+                      this.props.Origin,
+                      this.props.AI_ListID,
+                      this.flag,
+                      this.props.vesselID
+                    )
+                  }
+                >
+                  Save and Exit
+                </button>
+              </Link>
+
               <button className="btn btn-outline-success m-2">Finalize</button>
             </div>
             <div className="col-2">

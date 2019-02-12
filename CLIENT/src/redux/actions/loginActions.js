@@ -1,15 +1,17 @@
 import { action_contants } from "./action-types";
 import axios from "axios";
 import { history } from "../../index";
-
+const apiUrl = "http://localhost:5000";
 export const checkValidUser = (userName, password, VesselID) => {
   return dispatch => {
     axios
-      .get(
-        `http://localhost:5000/checkUserDetails/${userName}/${password}/${VesselID}`
-      )
+      .post(`${apiUrl}/checkUserDetails/`, {
+        userName: userName,
+        psswd: password,
+        vesselID: VesselID
+      })
       .then(res => {
-        console.log(res.data, VesselID);
+        localStorage.setItem("vesselID", VesselID);
         dispatch({
           type: action_contants.SUCCESS,
           userDetails: res.data.userinfo[0],
@@ -34,7 +36,7 @@ export const checkValidUser = (userName, password, VesselID) => {
 export const getVslCode = () => {
   return dispatch => {
     axios
-      .get(`http://localhost:5000/getVslCode/`)
+      .get(`${apiUrl}/getVslCode/`)
       .then(res => {
         dispatch({
           type: action_contants.GETVSLCODE,
