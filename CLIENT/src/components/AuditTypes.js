@@ -8,7 +8,6 @@ import {
   getAduitDetailsFromDB,
   getNewModeDetailsFromDB
 } from "../redux/actions/services.js";
-import { history } from "../index";
 class auditTypes extends Component {
   // get vessel code
   //create action for get Audit details for correspng vsl code
@@ -57,16 +56,17 @@ class auditTypes extends Component {
         className="containers container-fluid "
         style={{ backgroundColor: "aquamarine" }}
       >
-        <button
+<Link to="/" refresh="true">       
+<button
           className="btn btn-danger"
           style={{ position: "absolute", top: "2%", left: "90%" }}
           onClick={() => {
             localStorage.clear();
-            history.push("/");
           }}
         >
           Logout
         </button>
+</Link>
         <div
           className="jumbotron"
           style={{ textAlign: "center", width: "36%" }}
