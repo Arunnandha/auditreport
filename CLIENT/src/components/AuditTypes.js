@@ -46,6 +46,7 @@ class auditTypes extends Component {
       >
         <Column field="AI_HistID" header="AI_HistID" />
         <Column field="StatusCode" header="StatusCode" />
+        <Column field="Description" header="Description" />
         <Column body={this.actionTemplate} />
       </DataTable>
     );
@@ -146,11 +147,7 @@ class auditTypes extends Component {
                 <button
                   className="btn btn-info "
                   onClick={() => {
-                    this.props.getNewModeDetails(
-                      this.props.AI_Details,
-                      this.props.Origin,
-                      this.props.vesselID
-                    );
+                    this.props.getNewModeDetails(this.props.AI_Details);
                   }}
                 >
                   New Audit
@@ -168,7 +165,7 @@ class auditTypes extends Component {
                 className="btn btn-info"
                 onClick={() => {
                   this.setState({ visible: true });
-                  this.props.getAduitDetails(this.props.vesselID);
+                  this.props.getAduitDetails();
                 }}
               >
                 Open Audit
@@ -178,7 +175,7 @@ class auditTypes extends Component {
           <Dialog
             header={<span style={{ color: "blue" }}>Open Audit</span>}
             visible={this.state.visible}
-            width="500px"
+            width="600px"
             modal={true}
             onHide={() => {
               this.setState({ visible: false });
@@ -195,8 +192,6 @@ const mapStateToProps = state => {
   console.log("state from AIdetails comp:", state);
   return {
     AI_AuditDetails: state.reducer.AI_AuditDetails,
-    vesselID: state.loginReducer.vesselID,
-    Origin: state.loginReducer.userDetails.Origin,
     AI_Details: state.reducer.AIdetails,
     HistId: state.reducer.histID
   };
@@ -204,9 +199,9 @@ const mapStateToProps = state => {
 
 const dispatchAction = dispatch => {
   return {
-    getAduitDetails: vesselID => dispatch(getAduitDetailsFromDB(vesselID)),
-    getNewModeDetails: (updateAIdetails, origin, vesselID) =>
-      dispatch(getNewModeDetailsFromDB(updateAIdetails, origin, vesselID))
+    getAduitDetails: () => dispatch(getAduitDetailsFromDB()),
+    getNewModeDetails: updateAIdetails =>
+      dispatch(getNewModeDetailsFromDB(updateAIdetails))
   };
 };
 
