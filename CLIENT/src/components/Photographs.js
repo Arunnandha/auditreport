@@ -320,8 +320,8 @@ class PhotoGraphs extends Component {
 const mapStateToProps = state => {
   return {
     blobContent: state.reducer.blobContent,
-    VesselID: state.reducer.AIdetails.VesselID,
-    Origin: state.reducer.AIdetails.Origin,
+    VesselID: state.loginReducer.vesselID,
+    Origin: state.loginReducer.userDetails.Origin,
     HistID: state.reducer.histID
   };
 };

@@ -9,9 +9,12 @@ export const getAIdetailsFromDB = histID => {
       .get(`${apiUrl}/getAIdetails/${histID}`)
       .then(res => {
         console.log(res.data);
+
+        let AIdetails = res.data[0];
+
         dispatch({
           type: action_contants.GET_AI_DETAILS,
-          AIdetails: res.data[0],
+          AIdetails: AIdetails,
           histID: histID
         });
         let vesselID = res.data[0].VesselID;
@@ -25,16 +28,29 @@ export const getAIdetailsFromDB = histID => {
 };
 
 // update AIdetails -- Edited details got from header component
-export const updateAIdetailsToDB = (updatedDetails, histID) => {
+export const updateAIdetailsToDB = (
+  updatedDetails,
+  histID,
+  Origin,
+  AI_ListID,
+  flag,
+  vesselID
+) => {
   return dispatch => {
     axios
       .post(`${apiUrl}/updateAIdetails/`, {
         updatedDetails: updatedDetails,
-        histID: histID
+        histID: histID,
+        Origin: Origin,
+        AI_ListID: AI_ListID,
+        flag: "Edit",
+        VesselID: vesselID
       })
       .then(res => {
+        console.log("res from update", res);
         dispatch({
-          type: action_contants.UPDATE_AI_DETAILS
+          type: action_contants.UPDATE_AI_DETAILS,
+          histID: res.data
         });
         alert("AI Details Updated Successfully");
       })
@@ -179,4 +195,58 @@ export const getAduitDetailsFromDB = vesselID => {
         console.log(err);
       });
   };
+};
+export const getNewModeDetailsFromDB = (updatedDetails, origin, vesselID) => {
+  alert(origin);
+  return dispatch => {
+    axios
+      .post(`${apiUrl}/getNewModeDetails`, {
+        origin: origin,
+        vesselID: vesselID
+      })
+      .then(res => {
+        console.log("getNewModeDetailsFromDB", res);
+        //get new HistID
+        getNewHistID(updatedDetails, -1, origin, -1, "New", vesselID, dispatch);
+
+        dispatch({
+          type: action_contants.GET_NEW_MODE_DETAILS,
+          payload: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
+
+export const getNewHistID = (
+  updatedDetails,
+  histID,
+  Origin,
+  AI_ListID,
+  flag,
+  vesselID,
+  dispatch
+) => {
+  axios
+    .post(`${apiUrl}/updateAIdetails/`, {
+      updatedDetails: updatedDetails,
+      histID: histID,
+      Origin: Origin,
+      AI_ListID: AI_ListID,
+      flag: flag,
+      VesselID: vesselID
+    })
+    .then(res => {
+      console.log("res from update", res);
+      dispatch({
+        type: action_contants.UPDATE_AI_DETAILS,
+        histID: res.data
+      });
+      alert("AI Details Updated Successfully");
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };

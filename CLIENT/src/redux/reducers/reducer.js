@@ -1,28 +1,31 @@
 import { action_contants } from "../actions/action-types";
+import AIDetails from "../../components/AIDetails";
 
 const initState = {
   histID: 0,
   AIdetails: {
     Origin: "",
     AIDescription: "",
-    AuditInspection_EndDate: new Date(),
-    AuditInspection_StartDate: new Date(),
+    AuditInspection_EndDate: null,
+    AuditInspection_StartDate: null,
     PortOfAuditInspection: "",
     AuditingCompany: "",
     AuditorName: "",
-    ReportDate: new Date(),
+    ReportDate: null,
     ReportBy: "",
     ReportByRole_Rank: "",
     SuptName: "",
     MasterName: "",
     ClassNo: "",
     Flag: "",
-    DelivDate: new Date(),
+    DelivDate: null,
     ImoNo: "",
     NoOfDefectAdded: 0,
     VesselID: -1,
-    AI_AuditDetails: []
+    AI_AuditDetails: [],
+    AI_ListID: -1
   },
+  selectAIDescription: [],
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
   blobContent: []
@@ -35,6 +38,25 @@ const reducer = (state = initState, action) => {
         ...state,
         AI_AuditDetails: action.payload
       };
+    case action_contants.GET_NEW_MODE_DETAILS:
+      console.log("state", state);
+      let { desc, vslDetails } = action.payload;
+      var AI_listID;
+      if (desc.length > 1 && state.AIdetails.AI_ListID === -1) {
+        AI_listID = desc[0].AI_ListID;
+      }
+      return {
+        ...state,
+        selectAIDescription: desc,
+        AIdetails: {
+          ...state.AIdetails,
+          ClassNo: vslDetails[0].ClassNo,
+          DelivDate: vslDetails[0].DelivDate,
+          Flag: vslDetails[0].Flag,
+          ImoNo: vslDetails[0].ImoNo,
+          AI_ListID: AI_listID
+        }
+      };
     case action_contants.GET_AI_DETAILS:
       return {
         ...state,
@@ -43,6 +65,10 @@ const reducer = (state = initState, action) => {
         isNewReport: false
       };
     case action_contants.UPDATE_AI_DETAILS:
+      return {
+        ...state,
+        histID: action.histID
+      };
       //update AI details from previous state
       // ( redux store state updated using EDIT_AI_DETAILS )
       // state.AIdetails = { ...state.AIdetails};
@@ -64,8 +90,7 @@ const reducer = (state = initState, action) => {
         AIdetails: {
           ...state.AIdetails,
           [key]: action.EditAIdetails[key]
-        },
-        isNewReport: false
+        }
       };
     case action_contants.GET_BLOB:
       return {

@@ -4,10 +4,21 @@ import Header from "./header.js";
 import AIDetails from "./AIDetails.js";
 import ReportAndObservation from "./ReportAndObservation.js";
 import ErrorBoundary from "./HandleErrorComponent.js";
+import { history } from "../index";
 class App extends Component {
   render() {
     return (
       <div className="jumbotron">
+        <button
+          className="btn btn-danger"
+          style={{ position: "absolute", top: "2%", left: "90%" }}
+          onClick={() => {
+            localStorage.clear();
+            history.push("/");
+          }}
+        >
+          Logout
+        </button>
         <h3>New Audit / Inspection Report - ATLANTIC DREAM(d)</h3>
         {/*ErrorBoundary is a React component. It catch JavaScript errors
          anywhere in their child component tree */}

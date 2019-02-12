@@ -8,19 +8,19 @@ class AIDetails extends Component {
   state = {
     AI_Details: {
       AIDescription: "",
-      AuditInspection_EndDate: new Date(),
-      AuditInspection_StartDate: new Date(),
+      AuditInspection_EndDate: null,
+      AuditInspection_StartDate: null,
       PortOfAuditInspection: "",
       AuditingCompany: "",
       AuditorName: "",
-      ReportDate: new Date(),
+      ReportDate: null,
       ReportBy: "",
       ReportByRole_Rank: "",
       SuptName: "",
       MasterName: "",
       ClassNo: "",
       Flag: "",
-      DelivDate: new Date(),
+      DelivDate: null,
       ImoNo: "",
       NoOfDefectAdded: 0
     }
@@ -34,27 +34,48 @@ class AIDetails extends Component {
   test = () => {};
 
   render() {
+    let isNewReport = this.props.isNewReport;
+    let AIDescription = this.state.AI_Details.AIDescription;
+    let selectAIDescription = this.props.selectAIDescription;
+
     return (
       <div className="container-fluid">
         <div style={{ border: "1px solid" }} className="row py-2">
           {/* Column1 */}
-          <div className="col-4 inputField py-2">
+          <div className="col-5 inputField py-2">
             {/* Name of Audit / Inspection : */}
             <div className="row">
-              <div className="col-6">
+              <div className="col-6 txtAlign">
                 <label> Name of Audit / Inspection :</label>
               </div>
               <div className="col-6">
-                <textarea
+                <select
                   id="aiDesc"
-                  readOnly
-                  value={this.state.AI_Details.AIDescription}
-                />
+                  disabled={!isNewReport}
+                  onChange={e => {
+                    console.log(e);
+                    this.props.EditAIdetails({
+                      AI_ListID: e.target.value
+                    });
+                  }}
+                >
+                  {isNewReport == true ? (
+                    selectAIDescription.map((item, key) => {
+                      return (
+                        <option key={key} value={item.AI_ListID}>
+                          {item.Description}
+                        </option>
+                      );
+                    })
+                  ) : (
+                    <option value={AIDescription}>{AIDescription}</option>
+                  )}
+                </select>
               </div>
             </div>
             {/* AuditInspection StartDate */}
             <div className="row">
-              <div className="col-6">
+              <div className="col-6 txtAlign">
                 <label>
                   <span style={{ color: "red" }}> *</span>Audit / Inspection
                   Start Date :
@@ -64,7 +85,8 @@ class AIDetails extends Component {
                 <Calendar
                   dateFormat="dd/M/yy"
                   value={
-                    this.props.isNewReport
+                    this.state.AI_Details.AuditInspection_StartDate == "" ||
+                    this.state.AI_Details.AuditInspection_StartDate == null
                       ? ""
                       : new Date(
                           this.state.AI_Details.AuditInspection_StartDate
@@ -89,7 +111,7 @@ class AIDetails extends Component {
             </div>
             {/* Audit / Inspection End Date : */}
             <div className="row">
-              <div className="col-6">
+              <div className="col-6 txtAlign">
                 <label>
                   <span style={{ color: "red" }}> *</span> Audit / Inspection
                   End Date :
@@ -99,7 +121,8 @@ class AIDetails extends Component {
                 <Calendar
                   dateFormat="dd/M/yy"
                   value={
-                    this.props.isNewReport
+                    this.state.AI_Details.AuditInspection_EndDate == "" ||
+                    this.state.AI_Details.AuditInspection_EndDate == null
                       ? ""
                       : new Date(this.state.AI_Details.AuditInspection_EndDate)
                   }
@@ -120,7 +143,7 @@ class AIDetails extends Component {
             </div>
             {/* Place/Port of Audit/Inspctn: */}
             <div className="row">
-              <div className="col-6">
+              <div className="col-6 txtAlign">
                 <label>
                   <span style={{ color: "red" }}> *</span> Place/Port of Audit/
                   Inspctn:
@@ -140,7 +163,7 @@ class AIDetails extends Component {
             </div>
             {/* Auditing Company  */}
             <div className="row">
-              <div className="col-6">
+              <div className="col-6 txtAlign">
                 <label> Auditing Company (if any) :</label>
               </div>
               <div className="col-6">
@@ -157,7 +180,7 @@ class AIDetails extends Component {
             </div>
             {/* Auditor Name */}
             <div className="row">
-              <div className="col-6">
+              <div className="col-6 txtAlign">
                 <label> Auditor Name (if any) :</label>
               </div>
               <div className="col-6">
@@ -185,7 +208,8 @@ class AIDetails extends Component {
               <Calendar
                 dateFormat="dd/M/yy"
                 value={
-                  this.props.isNewReport
+                  this.state.AI_Details.ReportDate == "" ||
+                  this.state.AI_Details.ReportDate == null
                     ? ""
                     : new Date(this.state.AI_Details.ReportDate)
                 }
@@ -263,7 +287,7 @@ class AIDetails extends Component {
             {/* There is no Observation */}
             <div className="row">
               <div className="col-12">
-                <input type="checkbox" />
+                <input type="checkbox" style={{ width: "unset" }} />
                 <label>There is no Observation</label>
               </div>
             </div>
@@ -272,13 +296,13 @@ class AIDetails extends Component {
           {/* ****************************************** */}
           {/* Column1 3 */}
 
-          <div className="col-4 vslDetails py-2" style={{ textAlign: "right" }}>
+          <div className="col-3 vslDetails py-2" style={{ textAlign: "right" }}>
             <div style={{ textAlign: "left", fontWeight: 900 }}>
               <label> Vessel Details</label>
             </div>
             {/* Class Notation : */}
             <div>
-              <label> Class Notation :</label>
+              <label> Class Notn:</label>
               <input
                 disabled
                 type="text"
@@ -301,7 +325,8 @@ class AIDetails extends Component {
                 disabled
                 dateFormat="dd/M/yy"
                 value={
-                  this.props.isNewReport
+                  this.state.AI_Details.DelivDate == "" ||
+                  this.state.AI_Details.DelivDate == null
                     ? ""
                     : new Date(this.state.AI_Details.DelivDate)
                 }
@@ -328,7 +353,8 @@ const mapStateToProps = state => {
   return {
     AI_Details: state.reducer.AIdetails,
     HistIdFromState: state.reducer.histID,
-    isNewReport: state.reducer.isNewReport
+    isNewReport: state.reducer.isNewReport,
+    selectAIDescription: state.reducer.selectAIDescription
   };
 };
 

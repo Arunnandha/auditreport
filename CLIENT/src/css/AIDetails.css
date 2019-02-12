@@ -12,10 +12,15 @@ label {
 }
 input {
   padding: 2px;
+  width: 171px;
 }
 .p-inputtext {
-  width: 158px !important;
+  width: 171px !important;
 }
 #aiDesc {
-  width: 158px !important;
+  width: 171px !important;
+}
+
+.txtAlign {
+  text-align: right;
 }
