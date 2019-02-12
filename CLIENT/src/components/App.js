@@ -10,16 +10,17 @@ class App extends Component {
     return (
       <div className="jumbotron">
         <Link to="/" refresh="true">
-      <button
-          className="btn btn-danger"
-          style={{ position: "absolute", top: "2%", left: "90%" }}
-          onClick={() => {
-            localStorage.clear();
-          }}
-        >
-          Logout
-        </button>
-       </Link>
+          <button
+            className="btn btn-danger"
+            style={{ position: "absolute", top: "2%", left: "90%" }}
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            Logout
+          </button>
+        </Link>
         <h3>New Audit / Inspection Report - ATLANTIC DREAM(d)</h3>
         {/*ErrorBoundary is a React component. It catch JavaScript errors
          anywhere in their child component tree */}

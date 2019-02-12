@@ -56,17 +56,18 @@ class auditTypes extends Component {
         className="containers container-fluid "
         style={{ backgroundColor: "aquamarine" }}
       >
-<Link to="/" refresh="true">       
-<button
-          className="btn btn-danger"
-          style={{ position: "absolute", top: "2%", left: "90%" }}
-          onClick={() => {
-            localStorage.clear();
-          }}
-        >
-          Logout
-        </button>
-</Link>
+        <Link to="/" refresh="true">
+          <button
+            className="btn btn-danger"
+            style={{ position: "absolute", top: "2%", left: "90%" }}
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            Logout
+          </button>
+        </Link>
         <div
           className="jumbotron"
           style={{ textAlign: "center", width: "36%" }}

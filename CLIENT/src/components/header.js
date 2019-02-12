@@ -41,7 +41,7 @@ class Header extends Component {
                 <button
                   className="btn btn-outline-success m-2"
                   // It triggers the "updateAIdetailsToDB" action creator
-                  onClick={() =>
+                  onClick={() => {
                     this.props.updateAIdetails(
                       this.props.AI_Details,
                       this.props.HistId,
@@ -49,8 +49,9 @@ class Header extends Component {
                       this.props.AI_ListID,
                       this.flag,
                       this.props.vesselID
-                    )
-                  }
+                    );
+                    window.location.reload();
+                  }}
                 >
                   Save and Exit
                 </button>
