@@ -5,7 +5,8 @@ const initState = {
   vslCodeList: [],
   isToShowAlert: false,
   alert: {},
-  vesselID: -1
+  vesselID: -1,
+  isLoading: false
 };
 
 const loginReducer = (state = initState, action) => {
@@ -19,13 +20,20 @@ const loginReducer = (state = initState, action) => {
       return {
         ...state,
         alert: action.alert,
-        isToShowAlert: true
+        isToShowAlert: true,
+        isLoading: false
+      };
+    case action_contants.USER_LOGIN:
+      return {
+        ...state,
+        isLoading: true
       };
     case action_contants.SUCCESS:
       return {
         ...state,
         userDetails: action.userDetails,
-        vesselID: action.vesselID
+        vesselID: action.vesselID,
+        isLoading: false
       };
   }
 

@@ -11,14 +11,16 @@ export const checkValidUser = (userName, password, VesselID) => {
         vesselID: VesselID
       })
       .then(res => {
-        localStorage.setItem("vesselID", VesselID);
-        dispatch({
-          type: action_contants.SUCCESS,
-          userDetails: res.data.userinfo[0],
-          vesselID: VesselID
-        });
-        localStorage.setItem("user", JSON.stringify(res.data));
-        history.push("/");
+        setTimeout(() => {
+          localStorage.setItem("vesselID", VesselID);
+          dispatch({
+            type: action_contants.SUCCESS,
+            userDetails: res.data.userinfo[0],
+            vesselID: VesselID
+          });
+          localStorage.setItem("user", JSON.stringify(res.data));
+          history.push("/");
+        }, 1000);
       })
       .catch(err => {
         console.log(err);

@@ -28,3 +28,10 @@ export const setAuditTypeToStore = auditType => {
     });
   };
 };
+export const userLogging = () => {
+  return dispatch => {
+    dispatch({
+      type: action_contants.USER_LOGIN
+    });
+  };
+};

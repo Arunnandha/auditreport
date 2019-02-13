@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-
 import { checkValidUser, getVslCode } from "../redux/actions/loginActions";
-
 import { connect } from "react-redux";
+import Loader from "react-loaders";
+
+import { userLogging } from "../redux/actions/actionCreators";
 
 class Login extends Component {
   state = {
@@ -10,7 +11,8 @@ class Login extends Component {
     userName: "",
     passWord: "",
     vslID: -1,
-    submitted: false
+    submitted: false,
+    opacity: 1
   };
 
   componentDidMount() {
@@ -31,7 +33,8 @@ class Login extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.setState({ submitted: true });
+
+    this.setState({ submitted: true, opacity: 0.5 });
     var VesselID = -1;
     const { userName, passWord, vslID } = this.state;
     const { vslCodesList } = this.props;
@@ -40,16 +43,26 @@ class Login extends Component {
     else if (vslCodesList.length > 1 && vslID === -1)
       VesselID = vslCodesList[0].VesselID;
     if (userName && passWord && VesselID) {
+      this.props.userLogin();
       this.props.loginservice(userName, passWord, VesselID);
     }
   };
 
   render() {
-    const { passWord, userName, submitted, isToEnableVslCode } = this.state;
-    const { vslCodesList, isToShowAlert, alert } = this.props;
+    const {
+      passWord,
+      userName,
+      submitted,
+      isToEnableVslCode,
+      opacity
+    } = this.state;
+    const { vslCodesList, isToShowAlert, alert, isLoaded } = this.props;
 
     return (
-      <div className="containers container-fluid">
+      <div
+        className="containers container-fluid"
+        style={{ backgroundColor: `rgba(255, 255, 255, ${opacity})` }}
+      >
         {isToShowAlert && (
           <div
             style={{ position: "absolute", top: "10%" }}
@@ -131,14 +144,23 @@ class Login extends Component {
           </div>
           <div className="form-group">
             <div className="col-sm-12">
+              <div
+                style={{
+                  marginLeft: "64%",
+                  position: "absolute",
+                  zIndex: 9999
+                }}
+              >
+                <Loader type="line-scale" color="#138496" active={isLoaded} />
+              </div>
               <button
-                className="btn btn-info m-2"
                 style={{ float: "right" }}
+                className="btn btn-info"
                 onClick={e => this.handleSubmit(e)}
               >
                 Login
                 <span
-                  style={{ paddingRight: "1px" }}
+                  style={{ paddingLeft: "2px" }}
                   className="fas fa-sign-in-alt"
                 />
               </button>
@@ -154,7 +176,8 @@ const mpaStateToProps = state => {
   return {
     vslCodesList: state.loginReducer.vslCodeList,
     isToShowAlert: state.loginReducer.isToShowAlert,
-    alert: state.loginReducer.alert
+    alert: state.loginReducer.alert,
+    isLoaded: state.loginReducer.isLoading
   };
 };
 
@@ -162,7 +185,8 @@ const mapDispatchtoprops = dispatch => {
   return {
     loginservice: (username, password, VesselID) =>
       dispatch(checkValidUser(username, password, VesselID)),
-    getVslCode: () => dispatch(getVslCode())
+    getVslCode: () => dispatch(getVslCode()),
+    userLogin: () => dispatch(userLogging())
   };
 };
 

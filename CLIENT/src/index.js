@@ -11,6 +11,7 @@ import "primeicons/primeicons.css";
 import AuditTypes from "./components/AuditTypes";
 import { PrivateRoute } from "./router/PrivateRoute";
 import Login from "./components/login";
+import "loaders.css/src/animations/line-scale.scss";
 
 import { Router, Route, Link, IndexRoute } from "react-router-dom";
 import { createBrowserHistory } from "history";
