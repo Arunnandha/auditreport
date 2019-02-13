@@ -25,7 +25,7 @@ const initState = {
     AI_AuditDetails: [],
     AI_ListID: -1
   },
-  auditType: "All",
+  auditType: "Vessel Audit",
   selectAIDescription: [],
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
