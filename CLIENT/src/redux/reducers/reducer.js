@@ -25,6 +25,7 @@ const initState = {
     AI_AuditDetails: [],
     AI_ListID: -1
   },
+  auditType: "Vessel Audit",
   selectAIDescription: [],
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
@@ -38,10 +39,15 @@ const reducer = (state = initState, action) => {
         ...state,
         AI_AuditDetails: action.payload
       };
+    case action_contants.SET_AUDIT_TYPE:
+      return {
+        ...state,
+        auditType: action.payload
+      };
     case action_contants.GET_NEW_MODE_DETAILS:
-      console.log("state", state);
+      //object destructuring
       let { desc, vslDetails } = action.payload;
-      var AI_listID;
+      let AI_listID;
       if (desc.length > 1 && state.AIdetails.AI_ListID === -1) {
         AI_listID = desc[0].AI_ListID;
       }
@@ -55,7 +61,8 @@ const reducer = (state = initState, action) => {
           Flag: vslDetails[0].Flag,
           ImoNo: vslDetails[0].ImoNo,
           AI_ListID: AI_listID
-        }
+        },
+        isNewReport: true
       };
     case action_contants.GET_AI_DETAILS:
       return {
@@ -65,6 +72,11 @@ const reducer = (state = initState, action) => {
         isNewReport: false
       };
     case action_contants.UPDATE_AI_DETAILS:
+      return {
+        ...state,
+        histID: action.histID
+      };
+    case action_contants.GET_NEW_HIST_ID:
       return {
         ...state,
         histID: action.histID

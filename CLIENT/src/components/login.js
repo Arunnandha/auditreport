@@ -136,7 +136,7 @@ class Login extends Component {
                 style={{ float: "right" }}
                 onClick={e => this.handleSubmit(e)}
               >
-                Login{" "}
+                Login
                 <span
                   style={{ paddingRight: "1px" }}
                   className="fas fa-sign-in-alt"

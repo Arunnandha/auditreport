@@ -19,3 +19,12 @@ export const errorLogAC = (error, errorInfo) => {
     });
   };
 };
+//Error Logging Action Creator
+export const setAuditTypeToStore = auditType => {
+  return dispatch => {
+    dispatch({
+      type: action_contants.SET_AUDIT_TYPE,
+      payload: auditType
+    });
+  };
+};

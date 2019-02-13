@@ -44,7 +44,7 @@ export const updateAIdetailsToDB = (
         Origin: Origin,
         AI_ListID: AI_ListID,
         flag: "Edit",
-        VesselID: vesselID
+        VesselID: localStorage.getItem("vesselID")
       })
       .then(res => {
         console.log("res from update", res);
@@ -73,7 +73,7 @@ export const handleUpload = (
 
     data.append("file", imgFile, fileName);
     data.append("description", description);
-    data.append("VesselID", vesselID);
+    data.append("VesselID", localStorage.getItem("vesselID"));
     data.append("Origin", Origin);
     data.append("HistID", HistID);
     let config = {
@@ -105,8 +105,9 @@ export const handleUpload = (
 
 //download  photograph from db/azure
 export const getAIHistAttachment = (histID, VesselID, Origin, dispatch) => {
+  let vesselID = localStorage.getItem("vesselID");
   axios
-    .get(`${apiUrl}/getAIPhotographs/${histID}/${VesselID}/${Origin}`)
+    .get(`${apiUrl}/getAIPhotographs/${histID}/${vesselID}/${Origin}`)
     .then(res => {
       dispatch({
         type: action_contants.GET_BLOB,
@@ -151,7 +152,7 @@ export const handleEditUpload = (
     data.append("file", editaiImagebase64File, editFileName);
     data.append("description", editDescription);
     data.append("AI_Hist_PhotographAttachmentsID", editaiAttachmentId);
-    data.append("VesselID", VesselID);
+    data.append("VesselID", localStorage.getItem("vesselID"));
     data.append("Origin", Origin);
     let config = {
       headers: {
@@ -180,10 +181,16 @@ export const handleEditUpload = (
     });
   };
 };
-export const getAduitDetailsFromDB = vesselID => {
+export const getAduitDetailsFromDB = auditType => {
+  //get origin from localstorage
+  let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
+  let VesselID = localStorage.getItem("vesselID");
   return dispatch => {
     axios
-      .post(`${apiUrl}/getAuditDetails`, { VesselID: vesselID })
+      .post(`${apiUrl}/getAuditDetails`, {
+        VesselID: VesselID,
+        Origin: Origin
+      })
       .then(res => {
         console.log(res.data);
         dispatch({
@@ -196,18 +203,25 @@ export const getAduitDetailsFromDB = vesselID => {
       });
   };
 };
-export const getNewModeDetailsFromDB = (updatedDetails, origin, vesselID) => {
-  alert(origin);
+export const getNewModeDetailsFromDB = (newAIdetails, auditType) => {
+  alert(auditType);
+  //get vesselID and origin from local storage
+  let VesselID = localStorage.getItem("vesselID");
+  let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
+
   return dispatch => {
     axios
       .post(`${apiUrl}/getNewModeDetails`, {
-        origin: origin,
-        vesselID: vesselID
+        origin: Origin,
+        vesselID: VesselID,
+        auditType: auditType
       })
       .then(res => {
         console.log("getNewModeDetailsFromDB", res);
-        //get new HistID
-        getNewHistID(updatedDetails, -1, origin, -1, "New", vesselID, dispatch);
+
+        //get new HistID when click "New Audit"
+        // this method will dispatch the "GET_NEW_HIST_ID" action
+        getNewHistID(newAIdetails, -1, Origin, -1, "New", VesselID, dispatch);
 
         dispatch({
           type: action_contants.GET_NEW_MODE_DETAILS,
@@ -220,8 +234,9 @@ export const getNewModeDetailsFromDB = (updatedDetails, origin, vesselID) => {
   };
 };
 
+//dispatch the "GET_NEW_HIST_ID" action
 export const getNewHistID = (
-  updatedDetails,
+  newAIdetails,
   histID,
   Origin,
   AI_ListID,
@@ -231,7 +246,7 @@ export const getNewHistID = (
 ) => {
   axios
     .post(`${apiUrl}/updateAIdetails/`, {
-      updatedDetails: updatedDetails,
+      updatedDetails: newAIdetails,
       histID: histID,
       Origin: Origin,
       AI_ListID: AI_ListID,
@@ -241,10 +256,9 @@ export const getNewHistID = (
     .then(res => {
       console.log("res from update", res);
       dispatch({
-        type: action_contants.UPDATE_AI_DETAILS,
+        type: action_contants.GET_NEW_HIST_ID,
         histID: res.data
       });
-      alert("AI Details Updated Successfully");
     })
     .catch(err => {
       console.log(err);

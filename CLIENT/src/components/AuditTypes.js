@@ -8,15 +8,14 @@ import {
   getAduitDetailsFromDB,
   getNewModeDetailsFromDB
 } from "../redux/actions/services.js";
-import { history } from "../index";
+import { setAuditTypeToStore } from "../redux/actions/actionCreators.js";
 class auditTypes extends Component {
   // get vessel code
   //create action for get Audit details for correspng vsl code
   //set flag new/edit
 
   state = {
-    visible: false,
-    type: "All"
+    visible: false
   };
 
   actionTemplate = (rowData, column) => {
@@ -46,6 +45,7 @@ class auditTypes extends Component {
       >
         <Column field="AI_HistID" header="AI_HistID" />
         <Column field="StatusCode" header="StatusCode" />
+        <Column field="Description" header="Description" />
         <Column body={this.actionTemplate} />
       </DataTable>
     );
@@ -56,16 +56,18 @@ class auditTypes extends Component {
         className="containers container-fluid "
         style={{ backgroundColor: "aquamarine" }}
       >
-        <button
-          className="btn btn-danger"
-          style={{ position: "absolute", top: "2%", left: "90%" }}
-          onClick={() => {
-            localStorage.clear();
-            history.push("/");
-          }}
-        >
-          Logout
-        </button>
+        <Link to="/" refresh="true">
+          <button
+            className="btn btn-danger"
+            style={{ position: "absolute", top: "2%", left: "90%" }}
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+            }}
+          >
+            Logout
+          </button>
+        </Link>
         <div
           className="jumbotron"
           style={{ textAlign: "center", width: "36%" }}
@@ -94,7 +96,7 @@ class auditTypes extends Component {
             >
               <div className="dropdown btn-group dropright mb-5">
                 <button type="button" className="btn btn-secondary">
-                  {this.state.type}
+                  {this.props.auditType}
                 </button>
                 <button
                   type="button"
@@ -108,7 +110,7 @@ class auditTypes extends Component {
                     className="dropdown-item"
                     type="button"
                     onClick={() => {
-                      this.setState({ type: "All" });
+                      this.props.setAuditType("All");
                     }}
                   >
                     All
@@ -117,7 +119,7 @@ class auditTypes extends Component {
                     className="dropdown-item"
                     type="button"
                     onClick={() => {
-                      this.setState({ type: "Vessel Audit" });
+                      this.props.setAuditType("Vessel Audit");
                     }}
                   >
                     Vessel Audit
@@ -126,7 +128,7 @@ class auditTypes extends Component {
                     className="dropdown-item"
                     type="button"
                     onClick={() => {
-                      this.setState({ type: "Office Audit" });
+                      this.props.setAuditType("Office Audit");
                     }}
                   >
                     Office Audit
@@ -148,8 +150,7 @@ class auditTypes extends Component {
                   onClick={() => {
                     this.props.getNewModeDetails(
                       this.props.AI_Details,
-                      this.props.Origin,
-                      this.props.vesselID
+                      this.props.auditType
                     );
                   }}
                 >
@@ -168,7 +169,7 @@ class auditTypes extends Component {
                 className="btn btn-info"
                 onClick={() => {
                   this.setState({ visible: true });
-                  this.props.getAduitDetails(this.props.vesselID);
+                  this.props.getAduitDetails(this.props.auditType);
                 }}
               >
                 Open Audit
@@ -176,9 +177,11 @@ class auditTypes extends Component {
             </div>
           </div>
           <Dialog
-            header={<span style={{ color: "blue" }}>Open Audit</span>}
+            header={
+              <span style={{ color: "blue" }}>{this.props.auditType}</span>
+            }
             visible={this.state.visible}
-            width="500px"
+            width="600px"
             modal={true}
             onHide={() => {
               this.setState({ visible: false });
@@ -195,18 +198,18 @@ const mapStateToProps = state => {
   console.log("state from AIdetails comp:", state);
   return {
     AI_AuditDetails: state.reducer.AI_AuditDetails,
-    vesselID: state.loginReducer.vesselID,
-    Origin: state.loginReducer.userDetails.Origin,
     AI_Details: state.reducer.AIdetails,
-    HistId: state.reducer.histID
+    HistId: state.reducer.histID,
+    auditType: state.reducer.auditType
   };
 };
 
 const dispatchAction = dispatch => {
   return {
-    getAduitDetails: vesselID => dispatch(getAduitDetailsFromDB(vesselID)),
-    getNewModeDetails: (updateAIdetails, origin, vesselID) =>
-      dispatch(getNewModeDetailsFromDB(updateAIdetails, origin, vesselID))
+    getAduitDetails: auditType => dispatch(getAduitDetailsFromDB(auditType)),
+    getNewModeDetails: (newAIdetails, auditType) =>
+      dispatch(getNewModeDetailsFromDB(newAIdetails, auditType)),
+    setAuditType: auditType => dispatch(setAuditTypeToStore(auditType))
   };
 };
 
