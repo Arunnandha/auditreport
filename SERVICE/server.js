@@ -30,13 +30,14 @@ app.get("/getAIdetails/:histID", async (req, res) => {
     mssql.close();
     res.send(result1.recordset);
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--getAIdetails-->>>>>" + err);
     mssql.close();
     res.status(400).send("query error" + err);
   }
 });
 mssql.on("error", err => {
   // ... error handler
+  console.log("from error handler", err);
 });
 app.post("/updateAIdetails/", async (req, res) => {
   console.log("hit update");
@@ -111,7 +112,7 @@ app.post("/updateAIdetails/", async (req, res) => {
     console.log(result1.output.new_HistID);
     res.send(result1.output.new_HistID);
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--updateAIdetails-->>>>>" + err);
     mssql.close();
     res.status(400).send("query error" + err);
   }
@@ -191,7 +192,7 @@ app.post("/deleteAIPhotographs/", async (req, res) => {
 
     res.send("ok");
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--deleteAIPhotographs-->>>>>" + err);
     mssql.close();
   }
 });
@@ -263,7 +264,7 @@ app.post("/checkUserDetails", async (req, res) => {
       });
     } else res.sendStatus(400);
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--checkUserDetails-->>>>>" + err);
     mssql.close();
   }
 });
@@ -277,21 +278,24 @@ app.get("/getVslCode/", async (req, res) => {
     mssql.close();
     res.send(result1.recordset);
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--getVslCode-->>>>>" + err);
     mssql.close();
   }
 });
 
+//when click New audit in client
 app.post("/getNewModeDetails", async (req, res) => {
   try {
     var Origin = req.body.origin;
     var VesselID = req.body.vesselID;
+    var auditType = req.body.auditType;
 
     let conn = await mssql.connect(config);
     let result1 = await conn
       .request()
       .input("origin", mssql.VarChar(3), Origin)
-      .execute("usp_AI_RN_GetNewModeDetails");
+      .input("auditType", mssql.VarChar(20), auditType)
+      .execute("usp_AI_RN_GetAIdescription");
 
     let result2 = await conn
       .request()
@@ -301,14 +305,16 @@ app.post("/getNewModeDetails", async (req, res) => {
     mssql.close();
     res.send({ desc: result1.recordset, vslDetails: result2.recordset });
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--GetNewModeDetails-->>>>>" + err);
     mssql.close();
   }
 });
-
+//when click open audit in client
 app.post("/getAuditDetails", async (req, res) => {
   var VesselID = req.body.VesselID;
   var Origin = req.body.Origin;
+  var auditType = req.body.auditType;
+
   console.log("origin:", Origin);
   try {
     let conn = await mssql.connect(config);
@@ -321,7 +327,7 @@ app.post("/getAuditDetails", async (req, res) => {
 
     res.send(result1.recordset);
   } catch (err) {
-    console.log("err---->>>>>" + err);
+    console.log("err--getAuditDetails-->>>>>" + err);
     mssql.close();
   }
 });

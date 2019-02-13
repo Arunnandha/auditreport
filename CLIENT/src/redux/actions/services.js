@@ -181,13 +181,16 @@ export const handleEditUpload = (
     });
   };
 };
-export const getAduitDetailsFromDB = () => {
+export const getAduitDetailsFromDB = auditType => {
   //get origin from localstorage
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
   let VesselID = localStorage.getItem("vesselID");
   return dispatch => {
     axios
-      .post(`${apiUrl}/getAuditDetails`, { VesselID: VesselID, Origin: Origin })
+      .post(`${apiUrl}/getAuditDetails`, {
+        VesselID: VesselID,
+        Origin: Origin
+      })
       .then(res => {
         console.log(res.data);
         dispatch({
@@ -200,7 +203,8 @@ export const getAduitDetailsFromDB = () => {
       });
   };
 };
-export const getNewModeDetailsFromDB = updatedDetails => {
+export const getNewModeDetailsFromDB = (newAIdetails, auditType) => {
+  alert(auditType);
   //get vesselID and origin from local storage
   let VesselID = localStorage.getItem("vesselID");
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
@@ -209,14 +213,15 @@ export const getNewModeDetailsFromDB = updatedDetails => {
     axios
       .post(`${apiUrl}/getNewModeDetails`, {
         origin: Origin,
-        vesselID: VesselID
+        vesselID: VesselID,
+        auditType: auditType
       })
       .then(res => {
         console.log("getNewModeDetailsFromDB", res);
 
         //get new HistID when click "New Audit"
         // this method will dispatch the "GET_NEW_HIST_ID" action
-        getNewHistID(updatedDetails, -1, Origin, -1, "New", VesselID, dispatch);
+        getNewHistID(newAIdetails, -1, Origin, -1, "New", VesselID, dispatch);
 
         dispatch({
           type: action_contants.GET_NEW_MODE_DETAILS,
@@ -231,7 +236,7 @@ export const getNewModeDetailsFromDB = updatedDetails => {
 
 //dispatch the "GET_NEW_HIST_ID" action
 export const getNewHistID = (
-  updatedDetails,
+  newAIdetails,
   histID,
   Origin,
   AI_ListID,
@@ -241,7 +246,7 @@ export const getNewHistID = (
 ) => {
   axios
     .post(`${apiUrl}/updateAIdetails/`, {
-      updatedDetails: updatedDetails,
+      updatedDetails: newAIdetails,
       histID: histID,
       Origin: Origin,
       AI_ListID: AI_ListID,

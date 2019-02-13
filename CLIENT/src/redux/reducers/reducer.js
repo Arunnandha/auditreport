@@ -25,6 +25,7 @@ const initState = {
     AI_AuditDetails: [],
     AI_ListID: -1
   },
+  auditType: "All",
   selectAIDescription: [],
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
@@ -37,6 +38,11 @@ const reducer = (state = initState, action) => {
       return {
         ...state,
         AI_AuditDetails: action.payload
+      };
+    case action_contants.SET_AUDIT_TYPE:
+      return {
+        ...state,
+        auditType: action.payload
       };
     case action_contants.GET_NEW_MODE_DETAILS:
       //object destructuring

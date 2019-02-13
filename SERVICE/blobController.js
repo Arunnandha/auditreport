@@ -179,7 +179,7 @@ module.exports = {
             mssql.close();
             console.log("result db -->", result1);
           } catch (err) {
-            console.log("err---->>>>>" + err);
+            console.log("err--uploadFileToAzure-->>>>>" + err);
             mssql.close();
           }
           //Creating blob service for read,create ,delete & update files from azure.
@@ -279,7 +279,7 @@ module.exports = {
         });
         res.send(result1.recordset);
       } catch (err) {
-        console.log("err---->>>>>" + err);
+        console.log("err--downloadFileFromDB-->>>>>" + err);
         mssql.close();
       }
     }
@@ -450,7 +450,7 @@ module.exports = {
         mssql.close();
         res.send("ok");
       } catch (err) {
-        console.log("err---->>>>>" + err);
+        console.log("err--uploadFileToAzure-->>>>>" + err);
         mssql.close();
       }
     }
@@ -551,7 +551,7 @@ module.exports = {
               // res.sendStatus(200);
             });
           } catch (err) {
-            console.log("err---->>>>>" + err);
+            console.log("err--editFileInAzure-->>>>>" + err);
             mssql.close();
           }
         }
