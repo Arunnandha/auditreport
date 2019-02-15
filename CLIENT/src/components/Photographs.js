@@ -54,7 +54,7 @@ class PhotoGraphs extends Component {
             {/*click to open delete dialog box */}
             <button
               title="Delete"
-              className="btn btn-danger m-2"
+              className="btn btn-info m-2"
               onClick={e => {
                 this.setState({
                   delDialogvisible: true,
@@ -143,7 +143,11 @@ class PhotoGraphs extends Component {
     return (
       <div
         className="form-group"
-        style={{ fontSize: "16px", textAlign: "left", padding: "5px" }}
+        style={{
+          fontSize: "16px",
+          textAlign: "left",
+          padding: "5px"
+        }}
       >
         <textarea
           className="form-control"
@@ -163,7 +167,7 @@ class PhotoGraphs extends Component {
         {editComponent}
         <div style={{ textAlign: "right" }} className="p-col-12">
           <button
-            className="btn btn-outline-danger btn-sm m-2"
+            className="btn btn-outline-warning btn-sm m-2"
             onClick={() => {
               this.setState({ visible: false });
               this.clearDialog();

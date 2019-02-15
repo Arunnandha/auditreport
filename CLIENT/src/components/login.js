@@ -11,8 +11,7 @@ class Login extends Component {
     userName: "",
     passWord: "",
     vslID: -1,
-    submitted: false,
-    opacity: 1
+    submitted: false
   };
 
   componentDidMount() {
@@ -34,7 +33,7 @@ class Login extends Component {
   handleSubmit = e => {
     e.preventDefault();
 
-    this.setState({ submitted: true, opacity: 0.5 });
+    this.setState({ submitted: true });
     var VesselID = -1;
     const { userName, passWord, vslID } = this.state;
     const { vslCodesList } = this.props;
@@ -61,7 +60,7 @@ class Login extends Component {
     return (
       <div
         className="containers container-fluid"
-        style={{ backgroundColor: `rgba(255, 255, 255, ${opacity})` }}
+        style={{ backgroundColor: "#17a2b8" }}
       >
         {isToShowAlert && (
           <div

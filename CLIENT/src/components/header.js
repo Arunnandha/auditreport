@@ -1,27 +1,17 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import { getAIdetailsFromDB } from "../redux/actions/services.js";
 import "../css/header.css";
-import { updateAIdetailsToDB } from "../redux/actions/services";
 import { Link } from "react-router-dom";
+import { updateAIdetailsToDB } from "../redux/actions/services";
+import { connect } from "react-redux";
 
 class Header extends Component {
-  histID;
-  flag;
-  constructor() {
-    super();
-    //get flag and histID from URL
+  state = { callMode: "" };
+  componentDidMount() {
     var url = window.location.href;
     var arr = url.split("/");
-    this.histID = arr[5];
-    this.flag = arr[4].toUpperCase();
-  }
-  componentDidMount() {
-    if (this.histID == -1 || this.flag == "NEW") {
-    } else {
-      this.props.getAIdetails(this.histID);
-      //set isNewReport: false
-    }
+    if (arr[4] == "Edit") {
+      this.setState({ callMode: "openAudit" });
+    } else this.setState({ callMode: "NewAudit" });
   }
   render() {
     return (
@@ -50,7 +40,6 @@ class Header extends Component {
                       this.flag,
                       this.props.vesselID
                     );
-                    window.location.reload();
                   }}
                 >
                   Save and Exit
@@ -61,7 +50,11 @@ class Header extends Component {
             </div>
             <div className="col-2">
               <button className="btn btn-outline-info m-2">log</button>
-              <button className="btn btn-outline-danger m-2">Cancel</button>
+              <Link to={`/${this.state.callMode}`}>
+                <button className="btn btn-outline-secondary m-2">
+                  Cancel
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -82,7 +75,6 @@ const mapStateToProps = state => {
 
 const dispatchAction = dispatch => {
   return {
-    getAIdetails: histID => dispatch(getAIdetailsFromDB(histID)),
     updateAIdetails: (
       updatedDetails,
       HistId,

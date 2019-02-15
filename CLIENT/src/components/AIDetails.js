@@ -26,17 +26,24 @@ class AIDetails extends Component {
     }
   };
 
+  constructor() {
+    super();
+    console.log("test");
+  }
+
   //capture Redux state's AI details into local state
   //local state used here for manipulation purpose
   componentWillReceiveProps(props) {
+    console.log("will recieve", props);
+
     this.setState({ AI_Details: props.AI_Details });
   }
   test = () => {};
 
   render() {
-    let isNewReport = this.props.isNewReport;
+    //object destructing
     let AIDescription = this.state.AI_Details.AIDescription;
-    let selectAIDescription = this.props.selectAIDescription;
+    console.log("from ai", this.state.AI_Details);
 
     return (
       <div className="container-fluid">
@@ -49,28 +56,7 @@ class AIDetails extends Component {
                 <label> Name of Audit / Inspection :</label>
               </div>
               <div className="col-6">
-                <select
-                  id="aiDesc"
-                  disabled={!isNewReport}
-                  onChange={e => {
-                    console.log(e);
-                    this.props.EditAIdetails({
-                      AI_ListID: e.target.value
-                    });
-                  }}
-                >
-                  {isNewReport == true ? (
-                    selectAIDescription.map((item, key) => {
-                      return (
-                        <option key={key} value={item.AI_ListID}>
-                          {item.Description}
-                        </option>
-                      );
-                    })
-                  ) : (
-                    <option value={AIDescription}>{AIDescription}</option>
-                  )}
-                </select>
+                <textarea id="aiDesc" readOnly value={AIDescription} />
               </div>
             </div>
             {/* AuditInspection StartDate */}
@@ -353,8 +339,7 @@ const mapStateToProps = state => {
   return {
     AI_Details: state.reducer.AIdetails,
     HistIdFromState: state.reducer.histID,
-    isNewReport: state.reducer.isNewReport,
-    selectAIDescription: state.reducer.selectAIDescription
+    isNewReport: state.reducer.isNewReport
   };
 };
 
