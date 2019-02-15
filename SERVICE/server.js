@@ -49,6 +49,7 @@ app.post("/updateAIdetails/", async (req, res) => {
   var AI_ListID = req.body.AI_ListID;
   var flag = req.body.flag;
   var New_HistID = 0;
+  var new_Ref_Code = 0;
   console.log(flag);
   if (flag == "EDIT") {
     AI_ListID = -1;
@@ -106,11 +107,15 @@ app.post("/updateAIdetails/", async (req, res) => {
       .input("AI_ListID", mssql.Int, AI_ListID)
       .input("callMode", mssql.VarChar(10), flag)
       .output("new_HistID", New_HistID)
+      .output("new_Ref_Code", new_Ref_Code)
       .execute("usp_AI_RN_UpdateAIDetails");
 
     mssql.close();
-    console.log(result1.output.new_HistID);
-    res.send(result1.output.new_HistID);
+    console.log("output from update api", result1.output);
+    res.send({
+      histID: result1.output.new_HistID,
+      Ref_Code: result1.output.new_Ref_Code
+    });
   } catch (err) {
     console.log("err--updateAIdetails-->>>>>" + err);
     mssql.close();
@@ -238,24 +243,20 @@ app.post("/checkUserDetails", async (req, res) => {
   var userName = req.body.userName;
   var passWord = req.body.psswd;
   var vesselID = req.body.vesselID;
-  var isHqUser = false;
+  var isHqUser = 0;
   var qryStr = "";
   var exp = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-  isHqUser = exp.test(String(userName).toLowerCase());
-  if (isHqUser) {
-    qryStr = `select WinLoginEmailID,UserName,Role,Designation,UserPassword ,(select case when count(VesselID) > 1 then 'HQ' else 'VSL' end as origin from V_Vessels) as Origin
-    from HQ_Users where WinLoginEmailID = '${userName}' 
-    and UserPassword = '${passWord}' `;
-  } else {
-    qryStr = `select username, UserRank, userID, Fleet_CrewID, Password ,(select case when count(VesselID) > 1 then 'HQ' else 'VSL' end as origin from V_Vessels) as Origin
-    from Fleet_Crew
-    where Fleet_CrewID = ${userName}
-    and Password = '${passWord}'
-    and VesselID = ${vesselID}`;
-  }
+  if (exp.test(String(userName).toLowerCase())) isHqUser = 1;
+
   try {
     let conn = await mssql.connect(config);
-    let result1 = await conn.request().query(qryStr);
+    let result1 = await conn
+      .request()
+      .input("user_name", mssql.VarChar(40), userName)
+      .input("password", mssql.VarChar(40), passWord)
+      .input("vesselID", mssql.Int, vesselID)
+      .input("isHqUser", mssql.Int, isHqUser)
+      .execute("usp_AI_RN_ValidatingUser");
     mssql.close();
     if (result1.recordset.length > 0) {
       res.json({
@@ -319,7 +320,7 @@ app.post("/getAuditDetails", async (req, res) => {
   try {
     let conn = await mssql.connect(config);
     let result1 = await conn.request().query(
-      `select L.Description, A.AI_HistID, S.StatusCode, S.StatusString
+      `select L.Description,L.SubDescription, A.AI_HistID, S.StatusCode, S.StatusString
       from AI_Hist A,AI_Status S,AI_List L where A.VesselID=${VesselID} 
       and S.AI_StatusID=A.AI_StatusID and A.AI_ListID = L.AI_ListID and A.Origin='${Origin}'`
     );

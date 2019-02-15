@@ -47,10 +47,7 @@ const reducer = (state = initState, action) => {
     case action_contants.GET_NEW_MODE_DETAILS:
       //object destructuring
       let { desc, vslDetails } = action.payload;
-      let AI_listID;
-      if (desc.length > 1 && state.AIdetails.AI_ListID === -1) {
-        AI_listID = desc[0].AI_ListID;
-      }
+
       return {
         ...state,
         selectAIDescription: desc,
@@ -59,8 +56,7 @@ const reducer = (state = initState, action) => {
           ClassNo: vslDetails[0].ClassNo,
           DelivDate: vslDetails[0].DelivDate,
           Flag: vslDetails[0].Flag,
-          ImoNo: vslDetails[0].ImoNo,
-          AI_ListID: AI_listID
+          ImoNo: vslDetails[0].ImoNo
         },
         isNewReport: true
       };
@@ -79,11 +75,30 @@ const reducer = (state = initState, action) => {
     case action_contants.GET_NEW_HIST_ID:
       return {
         ...state,
-        histID: action.histID
+        histID: action.histID,
+        AIdetails: {
+          ...state.AIdetails,
+          AuditInspection_EndDate: null,
+          AuditInspection_StartDate: null,
+          PortOfAuditInspection: "",
+          AuditingCompany: "",
+          AuditorName: "",
+          ReportDate: null,
+          ReportBy: JSON.parse(localStorage.getItem("user")).userinfo[0]
+            .UserName,
+          ReportByRole_Rank: JSON.parse(localStorage.getItem("user"))
+            .userinfo[0].Role,
+          SuptName: "",
+          MasterName: JSON.parse(localStorage.getItem("user")).userinfo[0]
+            .masterName,
+          AI_ListID: action.AI_ListID,
+          AIDescription: action.AIDescription,
+          AIRefCode: action.Ref_Code,
+          StatusString: "Draft Report"
+        },
+        blobContent: []
       };
-      //update AI details from previous state
-      // ( redux store state updated using EDIT_AI_DETAILS )
-      // state.AIdetails = { ...state.AIdetails};
+
       break;
     case action_contants.LOGGING_ERR:
       return {

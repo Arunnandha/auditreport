@@ -181,7 +181,7 @@ export const handleEditUpload = (
     });
   };
 };
-export const getAduitDetailsFromDB = auditType => {
+export const getAuditDetailsFromDB = auditType => {
   //get origin from localstorage
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
   let VesselID = localStorage.getItem("vesselID");
@@ -193,6 +193,9 @@ export const getAduitDetailsFromDB = auditType => {
       })
       .then(res => {
         console.log(res.data);
+        if (auditType === "Office Audit") {
+          res.data = null;
+        }
         dispatch({
           type: action_contants.GET_AUDIT_DETAILS,
           payload: res.data
@@ -203,8 +206,7 @@ export const getAduitDetailsFromDB = auditType => {
       });
   };
 };
-export const getNewModeDetailsFromDB = (newAIdetails, auditType) => {
-  alert(auditType);
+export const getNewModeDetailsFromDB = auditType => {
   //get vesselID and origin from local storage
   let VesselID = localStorage.getItem("vesselID");
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
@@ -217,16 +219,11 @@ export const getNewModeDetailsFromDB = (newAIdetails, auditType) => {
         auditType: auditType
       })
       .then(res => {
-        console.log("getNewModeDetailsFromDB", res);
-
-        //get new HistID when click "New Audit"
-        // this method will dispatch the "GET_NEW_HIST_ID" action
-        getNewHistID(newAIdetails, -1, Origin, -1, "New", VesselID, dispatch);
-
         dispatch({
           type: action_contants.GET_NEW_MODE_DETAILS,
           payload: res.data
         });
+        console.log("getNewModeDetailsFromDB", res);
       })
       .catch(err => {
         console.log(err);
@@ -234,33 +231,36 @@ export const getNewModeDetailsFromDB = (newAIdetails, auditType) => {
   };
 };
 
-//dispatch the "GET_NEW_HIST_ID" action
-export const getNewHistID = (
-  newAIdetails,
-  histID,
-  Origin,
-  AI_ListID,
-  flag,
-  vesselID,
-  dispatch
-) => {
-  axios
-    .post(`${apiUrl}/updateAIdetails/`, {
-      updatedDetails: newAIdetails,
-      histID: histID,
-      Origin: Origin,
-      AI_ListID: AI_ListID,
-      flag: flag,
-      VesselID: vesselID
-    })
-    .then(res => {
-      console.log("res from update", res);
-      dispatch({
-        type: action_contants.GET_NEW_HIST_ID,
-        histID: res.data
+export const getNewReportFromDB = (newAIdetails, AI_ListID, AIDescription) => {
+  //get vesselID and origin from local storage
+  let VesselID = localStorage.getItem("vesselID");
+  let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
+
+  return dispatch => {
+    //get new HistID when click "New Audit"
+    // this method will dispatch the "GET_NEW_HIST_ID" action
+
+    axios
+      .post(`${apiUrl}/updateAIdetails/`, {
+        updatedDetails: newAIdetails,
+        histID: -1,
+        Origin: Origin,
+        AI_ListID: AI_ListID,
+        flag: "NEW",
+        VesselID: VesselID
+      })
+      .then(res => {
+        console.log("res from update", res);
+        dispatch({
+          type: action_contants.GET_NEW_HIST_ID,
+          histID: res.data.histID,
+          Ref_Code: res.data.Ref_Code,
+          AI_ListID: AI_ListID,
+          AIDescription: AIDescription
+        });
+      })
+      .catch(err => {
+        console.log(err);
       });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  };
 };

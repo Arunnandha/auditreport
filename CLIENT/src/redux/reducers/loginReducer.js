@@ -33,7 +33,8 @@ const loginReducer = (state = initState, action) => {
         ...state,
         userDetails: action.userDetails,
         vesselID: action.vesselID,
-        isLoading: false
+        isLoading: false,
+        isToShowAlert: false
       };
   }
 

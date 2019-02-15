@@ -5,7 +5,7 @@ export default class ReportAndObservation extends Component {
   //local state declaration
 
   state = {
-    activeIndex: 0
+    activeIndex: 1
   };
 
   render() {
