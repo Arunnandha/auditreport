@@ -19,7 +19,7 @@ export const errorLogAC = (error, errorInfo) => {
     });
   };
 };
-//Error Logging Action Creator
+
 export const setAuditTypeToStore = auditType => {
   return dispatch => {
     dispatch({
@@ -32,6 +32,27 @@ export const userLogging = () => {
   return dispatch => {
     dispatch({
       type: action_contants.USER_LOGIN
+    });
+  };
+};
+
+export const validatingAIDetails = (
+  updatedDetails,
+  HistId,
+  Origin,
+  AI_ListID,
+  flag,
+  vesselID
+) => {
+  return dispatch => {
+    dispatch({
+      type: action_contants.AIDETAILS_VALIDATION,
+      UpdatedDetails: updatedDetails,
+      HistId: HistId,
+      Origin: Origin,
+      AI_ListID: AI_ListID,
+      Flag: flag,
+      VesselID: vesselID
     });
   };
 };

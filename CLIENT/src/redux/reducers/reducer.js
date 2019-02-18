@@ -29,7 +29,8 @@ const initState = {
   selectAIDescription: [],
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
-  blobContent: []
+  blobContent: [],
+  validationMsg: ""
 };
 
 const reducer = (state = initState, action) => {
@@ -67,6 +68,17 @@ const reducer = (state = initState, action) => {
         AIdetails: action.AIdetails,
         isNewReport: false
       };
+    case action_contants.VALIDATION_ERROR:
+      return {
+        ...state,
+        validationMsg: action.payload
+      };
+    case action_contants.AIDETAILS_VALIDATION:
+      alert("testing");
+      return {
+        ...state,
+        validationMsg: ""
+      };
     case action_contants.UPDATE_AI_DETAILS:
       return {
         ...state,
@@ -99,7 +111,6 @@ const reducer = (state = initState, action) => {
         blobContent: []
       };
 
-      break;
     case action_contants.LOGGING_ERR:
       return {
         ...state,
@@ -117,7 +128,8 @@ const reducer = (state = initState, action) => {
         AIdetails: {
           ...state.AIdetails,
           [key]: action.EditAIdetails[key]
-        }
+        },
+        validationMsg: ""
       };
     case action_contants.GET_BLOB:
       return {

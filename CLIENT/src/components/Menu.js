@@ -68,8 +68,8 @@ export default class Menu extends Component {
               top: "0%",
               zIndex: 1,
               width: "100%",
-              backgroundColor: "black",
-              color: "white",
+              backgroundColor: "white",
+              color: "black",
               margin: "unset"
             }}
             className="row"

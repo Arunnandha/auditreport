@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../css/header.css";
 import { Link } from "react-router-dom";
-import { updateAIdetailsToDB } from "../redux/actions/services";
+import { validatingAIDetails } from "../redux/actions/actionCreators";
 import { connect } from "react-redux";
 
 class Header extends Component {
@@ -27,24 +27,22 @@ class Header extends Component {
               {this.props.AI_Details.StatusString}
             </div>
             <div className="col-4">
-              <Link to="/" refresh="true">
-                <button
-                  className="btn btn-outline-success m-2"
-                  // It triggers the "updateAIdetailsToDB" action creator
-                  onClick={() => {
-                    this.props.updateAIdetails(
-                      this.props.AI_Details,
-                      this.props.HistId,
-                      this.props.Origin,
-                      this.props.AI_ListID,
-                      this.flag,
-                      this.props.vesselID
-                    );
-                  }}
-                >
-                  Save and Exit
-                </button>
-              </Link>
+              <button
+                className="btn btn-outline-success m-2"
+                // It triggers the "updateAIdetailsToDB" action creator
+                onClick={() => {
+                  this.props.validatingAIDetails(
+                    this.props.AI_Details,
+                    this.props.HistId,
+                    this.props.Origin,
+                    this.props.AI_ListID,
+                    this.flag,
+                    this.props.vesselID
+                  );
+                }}
+              >
+                Save and Exit
+              </button>
 
               <button className="btn btn-outline-success m-2">Finalize</button>
             </div>
@@ -75,7 +73,7 @@ const mapStateToProps = state => {
 
 const dispatchAction = dispatch => {
   return {
-    updateAIdetails: (
+    validatingAIDetails: (
       updatedDetails,
       HistId,
       Origin,
@@ -84,7 +82,7 @@ const dispatchAction = dispatch => {
       vesselID
     ) =>
       dispatch(
-        updateAIdetailsToDB(
+        validatingAIDetails(
           updatedDetails,
           HistId,
           Origin,

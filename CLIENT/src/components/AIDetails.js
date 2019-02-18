@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import "../css/AIDetails.css";
 import { EditedAIdetails } from "../redux/actions/actionCreators.js";
 import { Calendar } from "primereact/calendar";
+import { Growl } from "primereact/growl";
 
 class AIDetails extends Component {
   state = {
@@ -26,19 +27,39 @@ class AIDetails extends Component {
     }
   };
 
-  constructor() {
-    super();
-    console.log("test");
-  }
+  showMultiple = validationdata => {
+    this.growl.show(validationdata);
+  };
 
   //capture Redux state's AI details into local state
   //local state used here for manipulation purpose
   componentWillReceiveProps(props) {
-    console.log("will recieve", props);
+    let validationData = [];
+    if (props.validationMsg.length > 0) {
+      let validationMsgs = props.validationMsg.split("~_");
+      if (validationMsgs.length > 0) {
+        validationData.push(
+          validationMsgs.map(data => {
+            return {
+              severity: "warn",
+              summary: "Required",
+              life: 5000,
+              detail: data
+            };
+          })
+        );
+      }
+    }
+    this.setState({
+      AI_Details: props.AI_Details
+    });
 
-    this.setState({ AI_Details: props.AI_Details });
+    if (validationData.length > 0) {
+      //remove the pushed empty object at end of array
+      validationData[0].pop();
+      this.showMultiple(validationData[0]);
+    }
   }
-  test = () => {};
 
   render() {
     //object destructing
@@ -47,6 +68,7 @@ class AIDetails extends Component {
 
     return (
       <div className="container-fluid">
+        <Growl ref={el => (this.growl = el)} />
         <div style={{ border: "1px solid" }} className="row py-2">
           {/* Column1 */}
           <div className="col-5 inputField py-2">
@@ -339,7 +361,8 @@ const mapStateToProps = state => {
   return {
     AI_Details: state.reducer.AIdetails,
     HistIdFromState: state.reducer.histID,
-    isNewReport: state.reducer.isNewReport
+    isNewReport: state.reducer.isNewReport,
+    validationMsg: state.reducer.validationMsg
   };
 };
 

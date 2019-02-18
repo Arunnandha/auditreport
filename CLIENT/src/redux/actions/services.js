@@ -1,5 +1,6 @@
 import { action_contants } from "./action-types";
 import axios from "axios";
+import { history } from "../../index";
 
 //get AI details
 const apiUrl = "http://localhost:5000";
@@ -34,30 +35,30 @@ export const updateAIdetailsToDB = (
   Origin,
   AI_ListID,
   flag,
-  vesselID
+  vesselID,
+  dispatch
 ) => {
-  return dispatch => {
-    axios
-      .post(`${apiUrl}/updateAIdetails/`, {
-        updatedDetails: updatedDetails,
-        histID: histID,
-        Origin: Origin,
-        AI_ListID: AI_ListID,
-        flag: "Edit",
-        VesselID: localStorage.getItem("vesselID")
-      })
-      .then(res => {
-        console.log("res from update", res);
-        dispatch({
-          type: action_contants.UPDATE_AI_DETAILS,
-          histID: res.data
-        });
-        alert("AI Details Updated Successfully");
-      })
-      .catch(err => {
-        console.log(err);
+  axios
+    .post(`${apiUrl}/updateAIdetails/`, {
+      updatedDetails: updatedDetails,
+      histID: histID,
+      Origin: Origin,
+      AI_ListID: AI_ListID,
+      flag: "Edit",
+      VesselID: localStorage.getItem("vesselID")
+    })
+    .then(res => {
+      console.log("res from update", res);
+      dispatch({
+        type: action_contants.UPDATE_AI_DETAILS,
+        histID: res.data
       });
-  };
+      history.push("./openAudit");
+      alert("AI Details Updated Successfully");
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 
 export const handleUpload = (

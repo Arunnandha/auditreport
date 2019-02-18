@@ -1,5 +1,5 @@
 import { action_contants } from "../actions/action-types";
-
+import { updateAIdetailsToDB } from "../actions/services";
 // export function forbiddenWordsMiddleware({ dispatch }) {
 // return function(next) {
 // return function(action) {
@@ -17,18 +17,56 @@ import { action_contants } from "../actions/action-types";
 // };
 // }
 
-export const forbiddenWordsMiddleware = store => next => action => {
-  if (action.type === action_contants.CHECK_VALIDATION) {
-    // AuditInspection_EndDate: null,
-    // AuditInspection_StartDate: null,
-    // PortOfAuditInspection: "",
-    // ReportDate: null,
-    // ReportBy: "",
-    // dispatch({
-    //     type: action_contants.CHECK_VALIDATION,
-    //     payload: updatedDetails
-    //   });
-  }
+export const validationAIDetailsMiddleware = ({
+  dispatch
+}) => next => action => {
+  if (action.type === action_contants.AIDETAILS_VALIDATION) {
+    let validationMsg = "";
+    const {
+      AuditInspection_EndDate,
+      AuditInspection_StartDate,
+      PortOfAuditInspection,
+      ReportDate,
+      ReportBy
+    } = action.UpdatedDetails;
 
+    if (AuditInspection_StartDate === null)
+      validationMsg = " > Start date cannot be empty.~_ ";
+    if (AuditInspection_EndDate === null)
+      validationMsg = validationMsg + " End date cannot be empty.~_";
+    if (PortOfAuditInspection === "")
+      validationMsg =
+        validationMsg + " Port of Audit inspection cannot be empty.~_";
+    if (ReportDate === null)
+      validationMsg = validationMsg + " Report date cannot be empty.~_";
+    if (ReportBy === "")
+      validationMsg = validationMsg + " Report by cannot be empty.~_";
+
+    if (validationMsg.length > 0) {
+      return dispatch({
+        type: action_contants.VALIDATION_ERROR,
+        payload: validationMsg
+      });
+    } else {
+      var {
+        UpdatedDetails,
+        HistId,
+        Origin,
+        AI_ListID,
+        Flag,
+        VesselID
+      } = action;
+      console.log("action", action);
+      updateAIdetailsToDB(
+        UpdatedDetails,
+        HistId,
+        Origin,
+        AI_ListID,
+        Flag,
+        VesselID,
+        dispatch
+      );
+    }
+  }
   next(action);
 };
