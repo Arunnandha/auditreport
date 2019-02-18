@@ -3,7 +3,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getNewReportFromDB } from "../redux/actions/services.js";
+import {
+  getNewReportFromDB,
+  getAuditDetailsFromDB
+} from "../redux/actions/services.js";
 import Menu from "./Menu";
 
 class openAuditPage extends Component {
@@ -14,6 +17,12 @@ class openAuditPage extends Component {
     var url = window.location.href;
     var arr = url.split("/");
     this.callMode = arr[3];
+  }
+  componentDidMount() {
+    //get these details Description, AI_HistID, StatusCode, StatusString
+    if (this.callMode == "openAudit") {
+      this.props.getAuditDetails(this.props.auditType);
+    }
   }
   actionTemplate = (rowData, column) => {
     //   if StatusCode is closed , edit button will be removed
@@ -109,6 +118,7 @@ const mapStateToProps = state => {
 
 const dispatchAction = dispatch => {
   return {
+    getAuditDetails: auditType => dispatch(getAuditDetailsFromDB(auditType)),
     getNewReport: (newAIdetails, AI_ListID, AIDescription) =>
       dispatch(getNewReportFromDB(newAIdetails, AI_ListID, AIDescription))
   };

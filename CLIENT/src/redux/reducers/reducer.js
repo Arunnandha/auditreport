@@ -87,6 +87,13 @@ const reducer = (state = initState, action) => {
         validationMsg: ""
       };
     case action_contants.GET_NEW_HIST_ID:
+      let masterName = "";
+      if (
+        JSON.parse(localStorage.getItem("user")).userinfo[0].masterName != null
+      ) {
+        masterName = JSON.parse(localStorage.getItem("user")).userinfo[0]
+          .masterName;
+      }
       return {
         ...state,
         histID: action.histID,
@@ -103,8 +110,7 @@ const reducer = (state = initState, action) => {
           ReportByRole_Rank: JSON.parse(localStorage.getItem("user"))
             .userinfo[0].Role,
           SuptName: "",
-          MasterName: JSON.parse(localStorage.getItem("user")).userinfo[0]
-            .masterName,
+          MasterName: masterName,
           AI_ListID: action.AI_ListID,
           AIDescription: action.AIDescription,
           AIRefCode: action.Ref_Code,

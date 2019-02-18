@@ -3,10 +3,7 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Menu from "./Menu";
 
-import {
-  getAuditDetailsFromDB,
-  getNewModeDetailsFromDB
-} from "../redux/actions/services.js";
+import { getNewModeDetailsFromDB } from "../redux/actions/services.js";
 import { setAuditTypeToStore } from "../redux/actions/actionCreators.js";
 class auditTypes extends Component {
   render() {
@@ -118,15 +115,7 @@ class auditTypes extends Component {
                 }}
               >
                 <Link to="/openAudit">
-                  <button
-                    className="btn btn-info"
-                    onClick={() => {
-                      //get these details Description, AI_HistID, StatusCode, StatusString
-                      this.props.getAuditDetails(this.props.auditType);
-                    }}
-                  >
-                    Open Audit
-                  </button>
+                  <button className="btn btn-info">Open Audit</button>
                 </Link>
               </div>
             </div>
@@ -149,7 +138,6 @@ const mapStateToProps = state => {
 
 const dispatchAction = dispatch => {
   return {
-    getAuditDetails: auditType => dispatch(getAuditDetailsFromDB(auditType)),
     getNewModeDetails: auditType =>
       dispatch(getNewModeDetailsFromDB(auditType)),
     setAuditType: auditType => dispatch(setAuditTypeToStore(auditType))

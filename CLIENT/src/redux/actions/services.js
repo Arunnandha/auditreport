@@ -11,9 +11,7 @@ export const getAIdetailsFromDB = histID => {
       .get(`${apiUrl}/getAIdetails/${histID}/${vesselID}`)
       .then(res => {
         console.log(res.data);
-
         let AIdetails = res.data[0];
-
         dispatch({
           type: action_contants.GET_AI_DETAILS,
           AIdetails: AIdetails,
