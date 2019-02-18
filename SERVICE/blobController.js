@@ -562,6 +562,7 @@ module.exports = {
 
 async function GetStorageOption(Origin, C_CompanyID, VesselID, TableName, cb) {
   // cb --> callback --> (data,err)=>{}
+  console.log("currentorigin" + Origin);
   if (Origin.toUpperCase() === "VSL") {
     var data = [{ HQ_Storage_Option: "database" }];
     cb(data);

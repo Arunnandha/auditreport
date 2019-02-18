@@ -34,6 +34,7 @@ class AIDetails extends Component {
   //capture Redux state's AI details into local state
   //local state used here for manipulation purpose
   componentWillReceiveProps(props) {
+    console.log(props.uid);
     let validationData = [];
     if (props.validationMsg.length > 0) {
       let validationMsgs = props.validationMsg.split("~_");
@@ -362,7 +363,8 @@ const mapStateToProps = state => {
     AI_Details: state.reducer.AIdetails,
     HistIdFromState: state.reducer.histID,
     isNewReport: state.reducer.isNewReport,
-    validationMsg: state.reducer.validationMsg
+    validationMsg: state.reducer.validationMsg,
+    uid: state.reducer.uid
   };
 };
 

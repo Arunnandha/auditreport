@@ -157,6 +157,7 @@ class PhotoGraphs extends Component {
         />
         <div style={{ textAlign: "left", margin: "2px" }} className="p-col-12">
           <input
+            style={{ width: "auto" }}
             type="file"
             name="myFile"
             ref={ref => (this.fileInput = ref)}

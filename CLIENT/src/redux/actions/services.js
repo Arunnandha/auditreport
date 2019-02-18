@@ -6,8 +6,9 @@ import { history } from "../../index";
 const apiUrl = "http://localhost:5000";
 export const getAIdetailsFromDB = histID => {
   return dispatch => {
+    var vesselID = localStorage.getItem("vesselID");
     axios
-      .get(`${apiUrl}/getAIdetails/${histID}`)
+      .get(`${apiUrl}/getAIdetails/${histID}/${vesselID}`)
       .then(res => {
         console.log(res.data);
 
@@ -53,7 +54,7 @@ export const updateAIdetailsToDB = (
         type: action_contants.UPDATE_AI_DETAILS,
         histID: res.data
       });
-      history.push("./openAudit");
+      history.push("/openAudit");
       alert("AI Details Updated Successfully");
     })
     .catch(err => {

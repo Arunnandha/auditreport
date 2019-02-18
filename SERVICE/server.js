@@ -17,14 +17,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-app.get("/getAIdetails/:histID", async (req, res) => {
+app.get("/getAIdetails/:histID/:vesselID", async (req, res) => {
   var histID = req.params.histID;
-  console.log("histID", histID);
+  var vesselID = req.params.vesselID;
+  console.log("vesselid", vesselID);
   try {
     let conn = await mssql.connect(config);
     let result1 = await conn
       .request()
       .input("AI_HistID", mssql.BigInt, histID)
+      .input("vesselID", mssql.Int, vesselID)
       .execute("usp_AI_RN_GetAIDetails");
 
     mssql.close();
@@ -137,6 +139,7 @@ app.post("/upLoadImageFile", async (req, res) => {
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
+
     fs.rename(oldpath, newpath, async function(err) {
       if (err) throw err;
       fs.readFile(newpath, async function(err, data) {

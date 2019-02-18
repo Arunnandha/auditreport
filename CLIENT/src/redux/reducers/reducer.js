@@ -30,7 +30,8 @@ const initState = {
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },
   blobContent: [],
-  validationMsg: ""
+  validationMsg: "",
+  uid: 0
 };
 
 const reducer = (state = initState, action) => {
@@ -71,10 +72,10 @@ const reducer = (state = initState, action) => {
     case action_contants.VALIDATION_ERROR:
       return {
         ...state,
-        validationMsg: action.payload
+        validationMsg: action.payload,
+        uid: state.uid + 1
       };
     case action_contants.AIDETAILS_VALIDATION:
-      alert("testing");
       return {
         ...state,
         validationMsg: ""
@@ -82,7 +83,8 @@ const reducer = (state = initState, action) => {
     case action_contants.UPDATE_AI_DETAILS:
       return {
         ...state,
-        histID: action.histID
+        histID: action.histID,
+        validationMsg: ""
       };
     case action_contants.GET_NEW_HIST_ID:
       return {
