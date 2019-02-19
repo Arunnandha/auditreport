@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import Menu from "./Menu";
+import Menu from "./NavMenu.js";
 
 import { getNewModeDetailsFromDB } from "../redux/actions/services.js";
 import { setAuditTypeToStore } from "../redux/actions/actionCreators.js";
-class auditTypes extends Component {
+class Home extends Component {
   render() {
     return (
       <div>
@@ -61,29 +61,29 @@ class auditTypes extends Component {
                       type="button"
                       disabled={this.props.Origin == "VSL"}
                       onClick={() => {
-                        this.props.setAuditType("All");
+                        this.props.setAuditType("All Audits");
                       }}
                     >
-                      All
+                      All Audits
                     </button>
                     <button
                       className="dropdown-item"
                       type="button"
                       onClick={() => {
-                        this.props.setAuditType("Vessel Audit");
+                        this.props.setAuditType("Vessel Audits");
                       }}
                     >
-                      Vessel Audit
+                      Vessel Audits
                     </button>
                     <button
                       className="dropdown-item"
                       type="button"
                       disabled={this.props.Origin == "VSL"}
                       onClick={() => {
-                        this.props.setAuditType("Office Audit");
+                        this.props.setAuditType("Office Audits");
                       }}
                     >
-                      Office Audit
+                      Office Audits
                     </button>
                   </div>
                 </div>
@@ -103,7 +103,7 @@ class auditTypes extends Component {
                       this.props.getNewModeDetails(this.props.auditType);
                     }}
                   >
-                    New Audit
+                    Add New Report
                   </button>
                 </Link>
               </div>
@@ -115,7 +115,9 @@ class auditTypes extends Component {
                 }}
               >
                 <Link to="/openAudit">
-                  <button className="btn btn-info">Open Audit</button>
+                  <button className="btn btn-info">
+                    Edit Existing Reports
+                  </button>
                 </Link>
               </div>
             </div>
@@ -147,4 +149,4 @@ const dispatchAction = dispatch => {
 export default connect(
   mapStateToProps,
   dispatchAction
-)(auditTypes);
+)(Home);

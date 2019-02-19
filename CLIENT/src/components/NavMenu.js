@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "../css/menu.css";
 
+//Menu Imported in three components( auditType , EditPage, OpenAuditPage)
 export default class Menu extends Component {
   state = {
-    openAuditPage: false,
+    existAuditPage: false,
     newAuditPage: false
     // createAuditPage: true,
     // editAuditPage: true
@@ -14,11 +15,11 @@ export default class Menu extends Component {
     var url = window.location.href;
     var arr = url.split("/");
     if (arr[3] == "") {
-      this.setState({ openAuditPage: false, newAuditPage: false });
+      this.setState({ existAuditPage: false, newAuditPage: false });
     } else if (arr[4] == "Edit") {
-      this.setState({ openAuditPage: true, newAuditPage: false });
+      this.setState({ existAuditPage: true, newAuditPage: false });
     } else if (arr[4] == "New")
-      this.setState({ openAuditPage: false, newAuditPage: true });
+      this.setState({ existAuditPage: false, newAuditPage: true });
   }
   home = (
     <Link to="/">
@@ -30,7 +31,7 @@ export default class Menu extends Component {
       <span className="mx-2" style={{ fontSize: "20px", fontWeight: 600 }}>
         &#8810;
       </span>
-      <Link to="/openAudit">Open Audit</Link>
+      <Link to="/openAudit">Existing AI Reports</Link>
     </span>
   );
   newAudit = (
@@ -38,7 +39,7 @@ export default class Menu extends Component {
       <span className="mx-2" style={{ fontSize: "20px", fontWeight: 600 }}>
         &#8810;
       </span>
-      <Link to="/NewAudit">New Audit</Link>
+      <Link to="/NewAudit">Audit Inspection Lists</Link>
     </span>
   );
   createAudit = (
@@ -77,7 +78,7 @@ export default class Menu extends Component {
             <div className="col-8 ">
               <div className="alignMiddle">
                 {this.home}
-                {this.state.openAuditPage ? this.openAudit : null}
+                {this.state.existAuditPage ? this.openAudit : null}
                 {this.state.newAuditPage ? this.newAudit : null}
                 {/* {this.state.createAuditPage ? this.createAudit : null}
                 {this.state.editAuditPage ? this.editAudit : null} */}

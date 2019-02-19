@@ -1,5 +1,4 @@
-import { action_contants } from "../actions/action-types";
-import AIDetails from "../../components/AIDetails";
+import { action_contants } from "../actions/action-types.js";
 
 const initState = {
   histID: 0,
@@ -25,7 +24,7 @@ const initState = {
     AI_AuditDetails: [],
     AI_ListID: -1
   },
-  auditType: "Vessel Audit",
+  auditType: "Vessel Audits",
   selectAIDescription: [],
   isNewReport: true,
   error: { errorMsg: null, errorInfo: null },

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { TabView, TabPanel } from "primereact/tabview";
-import PhotoGraphs from "./Photographs";
+import PhotoGraphs from "./Photographs.js";
 export default class ReportAndObservation extends Component {
   //local state declaration
 

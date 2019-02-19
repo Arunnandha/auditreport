@@ -6,7 +6,7 @@ import {
   handleUpload,
   deleteAttachment,
   handleEditUpload
-} from "../redux/actions/services";
+} from "../../redux/actions/services.js";
 import { connect } from "react-redux";
 
 class PhotoGraphs extends Component {

@@ -1,5 +1,5 @@
-import { action_contants } from "../actions/action-types";
-import { updateAIdetailsToDB } from "../actions/services";
+import { action_contants } from "../actions/action-types.js";
+import { updateAIdetailsToDB } from "../actions/services.js";
 // export function forbiddenWordsMiddleware({ dispatch }) {
 // return function(next) {
 // return function(action) {

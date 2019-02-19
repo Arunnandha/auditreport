@@ -1,4 +1,4 @@
-import { action_contants } from "../actions/action-types";
+import { action_contants } from "../actions/action-types.js";
 
 const initState = {
   userDetails: {},

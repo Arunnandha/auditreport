@@ -1,4 +1,4 @@
-import { action_contants } from "./action-types";
+import { action_contants } from "./action-types.js";
 import axios from "axios";
 import { history } from "../../index";
 const apiUrl = "http://localhost:5000";

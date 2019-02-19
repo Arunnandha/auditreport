@@ -7,9 +7,9 @@ import {
   getNewReportFromDB,
   getAuditDetailsFromDB
 } from "../redux/actions/services.js";
-import Menu from "./Menu";
+import Menu from "./NavMenu.js";
 
-class openAuditPage extends Component {
+class AIReportList extends Component {
   callMode;
   constructor() {
     super();
@@ -127,4 +127,4 @@ const dispatchAction = dispatch => {
 export default connect(
   mapStateToProps,
   dispatchAction
-)(openAuditPage);
+)(AIReportList);

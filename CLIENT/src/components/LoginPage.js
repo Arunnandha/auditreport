@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { checkValidUser, getVslCode } from "../redux/actions/loginActions";
+import { checkValidUser, getVslCode } from "../redux/actions/loginActions.js";
 import { connect } from "react-redux";
 import Loader from "react-loaders";
 
-import { userLogging } from "../redux/actions/actionCreators";
+import { userLogging } from "../redux/actions/actionCreators.js";
 
 class Login extends Component {
   state = {

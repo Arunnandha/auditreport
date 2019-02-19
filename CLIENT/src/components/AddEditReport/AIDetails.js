@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import "../css/AIDetails.css";
-import { EditedAIdetails } from "../redux/actions/actionCreators.js";
+import "../../css/AIDetails.css";
+import { EditedAIdetails } from "../../redux/actions/actionCreators.js";
 import { Calendar } from "primereact/calendar";
 import { Growl } from "primereact/growl";
 

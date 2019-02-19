@@ -1,6 +1,6 @@
 import { action_contants } from "./action-types";
 import axios from "axios";
-import { history } from "../../index";
+import { history } from "../../index.js";
 
 //get AI details
 const apiUrl = "http://localhost:5000";

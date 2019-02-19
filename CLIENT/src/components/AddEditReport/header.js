@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import "../css/header.css";
+import "../../css/header.css";
 import { Link } from "react-router-dom";
-import { validatingAIDetails } from "../redux/actions/actionCreators";
+import { validatingAIDetails } from "../../redux/actions/actionCreators.js";
 import { connect } from "react-redux";
 
 class Header extends Component {

@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import "../css/App.css";
-import Header from "./header.js";
-import AIDetails from "./AIDetails.js";
-import ReportAndObservation from "./ReportAndObservation.js";
-import ErrorBoundary from "./HandleErrorComponent.js";
+import "../css/AddEditReport.css";
+import Header from "./AddEditReport/header.js";
+import AIDetails from "./AddEditReport/AIDetails.js";
+import ReportAndObservation from "./AddEditReport/ReportAndObservation.js";
+import ErrorBoundary from "./HandleError.js";
 import { connect } from "react-redux";
 import { getAIdetailsFromDB } from "../redux/actions/services.js";
-import Menu from "./Menu";
+import Menu from "./NavMenu.js";
 
-class App extends Component {
+class AddEditReport extends Component {
   histID;
   flag;
   constructor() {
@@ -61,4 +61,4 @@ const dispatchAction = dispatch => {
 export default connect(
   null,
   dispatchAction
-)(App);
+)(AddEditReport);

@@ -1,4 +1,4 @@
-import { action_contants } from "./action-types";
+import { action_contants } from "./action-types.js";
 
 // when AI details edited It will triggered
 export const EditedAIdetails = eidtedDetails => {
