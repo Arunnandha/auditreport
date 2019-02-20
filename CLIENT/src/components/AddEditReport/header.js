@@ -2,10 +2,14 @@ import React, { Component } from "react";
 import "../../css/header.css";
 import { Link } from "react-router-dom";
 import { validatingAIDetails } from "../../redux/actions/actionCreators.js";
+import { getAIReportLog } from "../../redux/actions/services.js";
 import { connect } from "react-redux";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Dialog } from "primereact/dialog";
 
 class Header extends Component {
-  state = { callMode: "" };
+  state = { callMode: "", visible: false };
   componentDidMount() {
     var url = window.location.href;
     var arr = url.split("/");
@@ -13,6 +17,50 @@ class Header extends Component {
       this.setState({ callMode: "openAudit" });
     } else this.setState({ callMode: "NewAudit" });
   }
+
+  renderlogDetails() {
+    return (
+      <div>
+        <DataTable
+          value={this.props.logDetails}
+          selectionMode="single"
+          scrollHeight="550px"
+          scrollable={true}
+          style={{ textAlign: "left" }}
+        >
+          <Column field="LogDate" header="Log Date" style={{ width: "20%" }} />
+          <Column
+            field="userName"
+            header="Name-Rank"
+            style={{ width: "20%" }}
+          />
+          <Column field="Activity" header="Activity" style={{ width: "25%" }} />
+          <Column field="Remarks" header="Remarks" style={{ width: "35%" }} />
+        </DataTable>
+        <div className="text-right">
+          <button
+            className="btn btn-primary m-2"
+            onClick={() => {
+              this.setState({ visible: false });
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  getReportLog() {
+    const { AI_ListID, AI_ListVslID } = this.props;
+    this.props.getCurrentLogDetails(
+      AI_ListID,
+      AI_ListVslID,
+      localStorage.getItem("vesselID")
+    );
+    this.setState({ visible: true });
+  }
+
   render() {
     return (
       <div>
@@ -47,7 +95,12 @@ class Header extends Component {
               <button className="btn btn-outline-success m-2">Finalize</button>
             </div>
             <div className="col-2">
-              <button className="btn btn-outline-info m-2">log</button>
+              <button
+                className="btn btn-outline-info m-2"
+                onClick={() => this.getReportLog()}
+              >
+                log
+              </button>
               <Link to={`/${this.state.callMode}`}>
                 <button className="btn btn-outline-secondary m-2">
                   Cancel
@@ -56,6 +109,15 @@ class Header extends Component {
             </div>
           </div>
         </div>
+        <Dialog
+          header="AI Log"
+          visible={this.state.visible}
+          width="600px"
+          modal={true}
+          onHide={() => this.setState({ visible: false })}
+        >
+          {this.renderlogDetails()}
+        </Dialog>
       </div>
     );
   }
@@ -67,7 +129,8 @@ const mapStateToProps = state => {
     HistId: state.reducer.histID,
     Origin: state.loginReducer.userDetails.Origin,
     AI_ListID: state.reducer.AIdetails.AI_ListID,
-    vesselID: state.loginReducer.vesselID
+    logDetails: state.log.logDetails,
+    AI_ListVslID: state.reducer.AIdetails.AI_List_VslID
   };
 };
 
@@ -90,7 +153,9 @@ const dispatchAction = dispatch => {
           flag,
           vesselID
         )
-      )
+      ),
+    getCurrentLogDetails: (AI_ListID, AI_ListVslID, vesselID) =>
+      dispatch(getAIReportLog(AI_ListID, AI_ListVslID, vesselID))
   };
 };
 export default connect(

@@ -22,7 +22,8 @@ const initState = {
     NoOfDefectAdded: 0,
     VesselID: -1,
     AI_AuditDetails: [],
-    AI_ListID: -1
+    AI_ListID: -1,
+    AI_List_VslID: -1
   },
   auditType: "Vessel Audits",
   selectAIDescription: [],
@@ -47,6 +48,7 @@ const reducer = (state = initState, action) => {
       };
     case action_contants.GET_NEW_MODE_DETAILS:
       //object destructuring
+
       let { desc, vslDetails } = action.payload;
 
       return {
@@ -113,7 +115,8 @@ const reducer = (state = initState, action) => {
           AI_ListID: action.AI_ListID,
           AIDescription: action.AIDescription,
           AIRefCode: action.Ref_Code,
-          StatusString: "Draft Report"
+          StatusString: "Draft Report",
+          AI_List_VslID: action.ai_listVslId
         },
         blobContent: []
       };

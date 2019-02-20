@@ -10,7 +10,7 @@ class Login extends Component {
     isToEnableVslCode: true,
     userName: "",
     passWord: "",
-    vslID: -1,
+    vslID: -2,
     submitted: false
   };
 
@@ -34,12 +34,12 @@ class Login extends Component {
     e.preventDefault();
 
     this.setState({ submitted: true });
-    var VesselID = -1;
+    var VesselID = -2;
     const { userName, passWord, vslID } = this.state;
     const { vslCodesList } = this.props;
     if (vslCodesList.length === 1) VesselID = vslCodesList[0].VesselID;
-    else if (vslID !== -1) VesselID = vslID;
-    else if (vslCodesList.length > 1 && vslID === -1)
+    else if (vslID !== -2) VesselID = vslID;
+    else if (vslCodesList.length > 1 && vslID === -2)
       VesselID = vslCodesList[0].VesselID;
     if (userName && passWord && VesselID) {
       this.props.userLogin();
@@ -48,13 +48,7 @@ class Login extends Component {
   };
 
   render() {
-    const {
-      passWord,
-      userName,
-      submitted,
-      isToEnableVslCode,
-      opacity
-    } = this.state;
+    const { passWord, userName, submitted, isToEnableVslCode } = this.state;
     const { vslCodesList, isToShowAlert, alert, isLoaded } = this.props;
 
     return (

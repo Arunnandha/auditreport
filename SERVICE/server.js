@@ -42,7 +42,6 @@ mssql.on("error", err => {
   console.log("from error handler", err);
 });
 app.post("/updateAIdetails/", async (req, res) => {
-  console.log("hit update");
   // console.log("updatedDetails", req.body.updatedDetails);
   var AI_Updated_details = req.body.updatedDetails;
   var histID = req.body.histID;
@@ -50,12 +49,11 @@ app.post("/updateAIdetails/", async (req, res) => {
   var Origin = req.body.Origin;
   var AI_ListID = req.body.AI_ListID;
   var flag = req.body.flag;
+  var reportby = req.body.curUsrName;
   var New_HistID = 0;
+  var curUsrRank = req.body.curUsrRank;
   var new_Ref_Code = 0;
-  console.log(flag);
-  if (flag == "EDIT") {
-    AI_ListID = -1;
-  }
+  var newAIListVslID = 0;
 
   // console.log("histID update", req.body.histID);
   try {
@@ -84,12 +82,8 @@ app.post("/updateAIdetails/", async (req, res) => {
       )
       .input("AuditorName", mssql.VarChar(50), AI_Updated_details.AuditorName)
       .input("ReportDate", mssql.VarChar(50), AI_Updated_details.ReportDate)
-      .input("ReportBy", mssql.VarChar(50), AI_Updated_details.ReportBy)
-      .input(
-        "ReportByRole_Rank",
-        mssql.VarChar(50),
-        AI_Updated_details.ReportByRole_Rank
-      )
+      .input("ReportBy", mssql.VarChar(50), reportby)
+      .input("ReportByRole_Rank", mssql.VarChar(50), curUsrRank)
       .input("MasterName", mssql.VarChar(50), AI_Updated_details.MasterName)
       .input("SuptName", mssql.VarChar(50), AI_Updated_details.SuptName)
       .input("ReportType", mssql.VarChar(50), "inspection")
@@ -108,15 +102,18 @@ app.post("/updateAIdetails/", async (req, res) => {
       .input("Origin", mssql.VarChar(3), Origin)
       .input("AI_ListID", mssql.Int, AI_ListID)
       .input("callMode", mssql.VarChar(10), flag)
+      .input("Remarks", mssql.VarChar(10), "")
       .output("new_HistID", New_HistID)
       .output("new_Ref_Code", new_Ref_Code)
+      .output("newAIListVslID", newAIListVslID)
       .execute("usp_AI_RN_UpdateAIDetails");
 
     mssql.close();
     console.log("output from update api", result1.output);
     res.send({
       histID: result1.output.new_HistID,
-      Ref_Code: result1.output.new_Ref_Code
+      Ref_Code: result1.output.new_Ref_Code,
+      aiListVslId: result1.output.newAIListVslID
     });
   } catch (err) {
     console.log("err--updateAIdetails-->>>>>" + err);
@@ -136,6 +133,10 @@ app.post("/upLoadImageFile", async (req, res) => {
     var VesselID = fields.VesselID;
     var Origin = fields.Origin;
     var histID = fields.HistID;
+    var AIListID = fields.AIListID;
+    var AIListVslID = fields.AIListVslID;
+    var userName = fields.userName;
+    var rank = fields.rank;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -158,7 +159,11 @@ app.post("/upLoadImageFile", async (req, res) => {
           VesselID,
           newpath,
           Origin,
-          histID
+          histID,
+          AIListID,
+          AIListVslID,
+          userName,
+          rank
         );
       });
 
@@ -216,6 +221,10 @@ app.post("/editUploadImageFile/", async (req, res) => {
     var companyID = 1;
     var VesselID = fields.VesselID;
     var Origin = fields.Origin;
+    var AIListID = fields.AIListID;
+    var AIListVslID = fields.AIListVslID;
+    var userName = fields.userName;
+    var rank = fields.rank;
     var tableName = "AI_Hist_PhotographAttachments";
     var fileContent;
     var newpath = "C:/wdir/" + fileName;
@@ -236,7 +245,11 @@ app.post("/editUploadImageFile/", async (req, res) => {
           tableName,
           newpath,
           fileContent,
-          Origin
+          Origin,
+          AIListID,
+          AIListVslID,
+          userName,
+          rank
         );
       });
     });
@@ -330,6 +343,30 @@ app.post("/getAuditDetailsList", async (req, res) => {
     res.send(result1.recordset);
   } catch (err) {
     console.log("err--getAuditDetails-->>>>>" + err);
+    mssql.close();
+  }
+});
+
+app.post("/getAILogDetails", async (req, res) => {
+  var VesselID = req.body.vesselID;
+  var AIListID = req.body.AIListID;
+  var AIListVslID = req.body.AIListVslID;
+
+  try {
+    console.log(VesselID + AIListID + AIListVslID);
+    let conn = await mssql.connect(config);
+    let result1 = await conn
+      .request()
+      .input("AIListID", mssql.BigInt, AIListID)
+      .input("AIListVslID", mssql.BigInt, AIListVslID)
+      .input("VesselID", mssql.Int, VesselID)
+      .execute("usp_AI_RN_GetAILog");
+
+    mssql.close();
+
+    res.send(result1.recordset);
+  } catch (err) {
+    console.log("err--getAILogDetails-->>>>>" + err);
     mssql.close();
   }
 });

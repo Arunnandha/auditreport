@@ -66,7 +66,11 @@ export const handleUpload = (
   description,
   vesselID,
   Origin,
-  HistID
+  HistID,
+  AIListID,
+  AIListVslID,
+  userName,
+  rank
 ) => {
   return dispatch => {
     let data = new FormData();
@@ -76,6 +80,11 @@ export const handleUpload = (
     data.append("VesselID", localStorage.getItem("vesselID"));
     data.append("Origin", Origin);
     data.append("HistID", HistID);
+    data.append("AIListID", AIListID);
+    data.append("AIListVslID", AIListVslID);
+    data.append("userName", userName);
+    data.append("rank", rank);
+
     let config = {
       headers: {
         "Content-Type": "multipart/form-data"
@@ -93,7 +102,6 @@ export const handleUpload = (
     //upload new photograph and get new "aiHistAttachmentID".
     axios.post(`${apiUrl}/upLoadImageFile/`, data, config).then(res => {
       let aiHistAttachmentID = res.data;
-      console.log(res.data);
       //when got response from upLoadImageFile, newly added photograph will render in client
       dispatch({
         type: action_contants.UPLOAD_PHOTOGRAPH,
@@ -145,7 +153,11 @@ export const handleEditUpload = (
   editDescription,
   editaiAttachmentId,
   VesselID,
-  Origin
+  Origin,
+  AIListID,
+  AIListVslID,
+  userName,
+  rank
 ) => {
   return dispatch => {
     let data = new FormData();
@@ -154,6 +166,11 @@ export const handleEditUpload = (
     data.append("AI_Hist_PhotographAttachmentsID", editaiAttachmentId);
     data.append("VesselID", localStorage.getItem("vesselID"));
     data.append("Origin", Origin);
+    data.append("AIListID", AIListID);
+    data.append("AIListVslID", AIListVslID);
+    data.append("userName", userName);
+    data.append("rank", rank);
+
     let config = {
       headers: {
         "Content-Type": "multipart/form-data"
@@ -185,7 +202,6 @@ export const getAuditDetailsFromDB = auditType => {
   //get origin from localstorage
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
   let VesselID = localStorage.getItem("vesselID");
-  alert(VesselID);
   return dispatch => {
     axios
       .post(`${apiUrl}/getAuditDetailsList`, {
@@ -210,24 +226,34 @@ export const getNewModeDetailsFromDB = auditType => {
   //get vesselID and origin from local storage
   let VesselID = localStorage.getItem("vesselID");
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
-
   return dispatch => {
-    axios
-      .post(`${apiUrl}/getNewModeDetails`, {
-        origin: Origin,
-        vesselID: VesselID,
-        auditType: auditType
-      })
-      .then(res => {
-        dispatch({
-          type: action_contants.GET_NEW_MODE_DETAILS,
-          payload: res.data
-        });
-        console.log("getNewModeDetailsFromDB", res);
-      })
-      .catch(err => {
-        console.log(err);
+    if (localStorage.getItem("vesselID") == -1) {
+      alert(auditType);
+
+      dispatch({
+        type: action_contants.GET_NEW_MODE_DETAILS,
+        payload: {
+          desc: "",
+          vslDetails: [{ ClassNo: "", DelivDate: "", Flag: "", ImoNo: "" }]
+        }
       });
+    } else
+      axios
+        .post(`${apiUrl}/getNewModeDetails`, {
+          origin: Origin,
+          vesselID: VesselID,
+          auditType: auditType
+        })
+        .then(res => {
+          dispatch({
+            type: action_contants.GET_NEW_MODE_DETAILS,
+            payload: res.data
+          });
+          console.log("getNewModeDetailsFromDB", res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
   };
 };
 
@@ -235,6 +261,7 @@ export const getNewReportFromDB = (newAIdetails, AI_ListID, AIDescription) => {
   //get vesselID and origin from local storage
   let VesselID = localStorage.getItem("vesselID");
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
+  let curusrnameRank = JSON.parse(localStorage.getItem("user")).userinfo[0];
 
   return dispatch => {
     //get new HistID when click "New Audit"
@@ -247,7 +274,9 @@ export const getNewReportFromDB = (newAIdetails, AI_ListID, AIDescription) => {
         Origin: Origin,
         AI_ListID: AI_ListID,
         flag: "NEW",
-        VesselID: VesselID
+        VesselID: VesselID,
+        curUsrName: curusrnameRank.UserName,
+        curUsrRank: curusrnameRank.Role
       })
       .then(res => {
         console.log("res from update", res);
@@ -255,8 +284,30 @@ export const getNewReportFromDB = (newAIdetails, AI_ListID, AIDescription) => {
           type: action_contants.GET_NEW_HIST_ID,
           histID: res.data.histID,
           Ref_Code: res.data.Ref_Code,
+          ai_listVslId: res.data.aiListVslId,
           AI_ListID: AI_ListID,
           AIDescription: AIDescription
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+};
+
+export const getAIReportLog = (AIListID, AIListVslID, vesselID) => {
+  return dispatch => {
+    axios
+      .post(`${apiUrl}/getAILogDetails`, {
+        AIListID: AIListID,
+        AIListVslID: AIListVslID,
+        vesselID: vesselID
+      })
+      .then(res => {
+        console.log("log", res);
+        dispatch({
+          type: action_contants.GET_LOG_DETAILS,
+          payload: res.data
         });
       })
       .catch(err => {

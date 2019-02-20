@@ -242,6 +242,8 @@ class PhotoGraphs extends Component {
   };
 
   submitPhotoGraph = () => {
+    var usrNameRank = JSON.parse(localStorage.getItem("user")).userinfo[0];
+
     if (this.state.callMode !== "EDIT")
       this.props.handleUploadBlob(
         this.state.selectedFile,
@@ -249,7 +251,11 @@ class PhotoGraphs extends Component {
         this.state.description,
         this.props.VesselID,
         this.props.Origin,
-        this.props.HistID
+        this.props.HistID,
+        this.props.AI_ListID,
+        this.props.AI_ListVslID,
+        usrNameRank.UserName,
+        usrNameRank.Role
       );
     else {
       this.props.handleEditBlob(
@@ -258,7 +264,11 @@ class PhotoGraphs extends Component {
         this.state.description,
         this.state.activeAiAttachmentId,
         this.props.VesselID,
-        this.props.Origin
+        this.props.Origin,
+        this.props.AI_ListID,
+        this.props.AI_ListVslID,
+        usrNameRank.UserName,
+        usrNameRank.Role
       );
     }
     this.clearDialog();
@@ -327,7 +337,9 @@ const mapStateToProps = state => {
     blobContent: state.reducer.blobContent,
     VesselID: state.loginReducer.vesselID,
     Origin: state.loginReducer.userDetails.Origin,
-    HistID: state.reducer.histID
+    HistID: state.reducer.histID,
+    AI_ListID: state.reducer.AIdetails.AI_ListID,
+    AI_ListVslID: state.reducer.AIdetails.AI_List_VslID
   };
 };
 
@@ -341,7 +353,11 @@ const dispatchAction = dispatch => {
       description,
       VesselID,
       Origin,
-      HistID
+      HistID,
+      AIListID,
+      AIListVslID,
+      userName,
+      rank
     ) =>
       dispatch(
         handleUpload(
@@ -350,7 +366,11 @@ const dispatchAction = dispatch => {
           description,
           VesselID,
           Origin,
-          HistID
+          HistID,
+          AIListID,
+          AIListVslID,
+          userName,
+          rank
         )
       ),
     handleEditBlob: (
@@ -359,7 +379,11 @@ const dispatchAction = dispatch => {
       description,
       activeAiAttachmentId,
       VesselID,
-      Origin
+      Origin,
+      AIListID,
+      AIListVslID,
+      userName,
+      rank
     ) =>
       dispatch(
         handleEditUpload(
@@ -368,7 +392,11 @@ const dispatchAction = dispatch => {
           description,
           activeAiAttachmentId,
           VesselID,
-          Origin
+          Origin,
+          AIListID,
+          AIListVslID,
+          userName,
+          rank
         )
       )
   };

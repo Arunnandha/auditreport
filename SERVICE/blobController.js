@@ -26,7 +26,11 @@ module.exports = {
     VesselID,
     filepath,
     Origin,
-    histID
+    histID,
+    AIListID,
+    AIListVslID,
+    userName,
+    rank
   ) {
     //last parameter is a function
     GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
@@ -52,7 +56,11 @@ module.exports = {
             fileContent,
             fileSize,
             VesselID,
-            histID
+            histID,
+            AIListID,
+            AIListVslID,
+            userName,
+            rank
           );
         } else if (strHQ_Storage_Option == "Cloud") {
           uploadFileToAzure(
@@ -65,7 +73,11 @@ module.exports = {
             fileSize,
             filepath,
             VesselID,
-            histID
+            histID,
+            AIListID,
+            AIListVslID,
+            userName,
+            rank
           );
         } else {
           console.log("Error while retrieve storage option");
@@ -83,7 +95,11 @@ module.exports = {
       fileContent,
       fileSize,
       VesselID,
-      histID
+      histID,
+      AIListID,
+      AIListVslID,
+      userName,
+      rank
     ) {
       var AI_HistPhotoGraphID = 0;
       try {
@@ -114,6 +130,10 @@ module.exports = {
           .input("VSL_Local_Folder", mssql.VarChar(250), "")
           .input("AddedOn", mssql.DateTime, new Date())
           .input("IsUploaded", mssql.Int, 1)
+          .input("AIListID", mssql.BigInt, AIListID)
+          .input("AIListVslID", mssql.BigInt, AIListVslID)
+          .input("userName", mssql.VarChar(50), userName)
+          .input("rank", mssql.VarChar(50), rank)
           .output("Newai_HistPhotoGraphID", AI_HistPhotoGraphID)
           .execute("usp_AI_RN_UploadPhotoGraphToDB");
 
@@ -136,7 +156,11 @@ module.exports = {
       fileSize,
       filepath,
       VesselID,
-      histID
+      histID,
+      AIListID,
+      AIListVslID,
+      userName,
+      rank
     ) {
       var AI_HistPhotoGraphID = 0;
       var result1;
@@ -171,6 +195,10 @@ module.exports = {
               .input("VSL_Local_Folder", mssql.VarChar(250), "")
               .input("AddedOn", mssql.DateTime, new Date())
               .input("IsUploaded", mssql.Int, 1)
+              .input("AIListID", mssql.BigInt, AIListID)
+              .input("AIListVslID", mssql.BigInt, AIListVslID)
+              .input("userName", mssql.VarChar(50), userName)
+              .input("rank", mssql.VarChar(50), rank)
               .output("Newai_HistPhotoGraphID", AI_HistPhotoGraphID)
               .execute("usp_AI_RN_UploadPhotoGraphToDB");
 
@@ -368,7 +396,11 @@ module.exports = {
     tableName,
     newpath,
     fileContent,
-    Origin
+    Origin,
+    AIListID,
+    AIListVslID,
+    userName,
+    rank
   ) {
     GetStorageOption(Origin, companyID, VesselID, tableName, (data, err) => {
       if (data) {
@@ -390,7 +422,11 @@ module.exports = {
             VesselID,
             tableName,
             newpath,
-            fileContent
+            fileContent,
+            AIListID,
+            AIListVslID,
+            userName,
+            rank
           );
         } else if (strHQ_Storage_Option == "Cloud") {
           editFileInAzure(
@@ -405,7 +441,11 @@ module.exports = {
             VesselID,
             tableName,
             newpath,
-            fileContent
+            fileContent,
+            AIListID,
+            AIListVslID,
+            userName,
+            rank
           );
         } else {
           console.log("Error while retrieve storage option");
@@ -425,7 +465,11 @@ module.exports = {
       VesselID,
       tableName,
       newpath,
-      fileContent
+      fileContent,
+      AIListID,
+      AIListVslID,
+      userName,
+      rank
     ) {
       try {
         let conn = await mssql.connect(config);
@@ -446,6 +490,10 @@ module.exports = {
           .input("OriginalFileSize", mssql.Int, fileSize)
           .input("AddedOn", mssql.DateTime, new Date())
           .input("IsUploaded", mssql.Int, 1)
+          .input("AIListID", mssql.BigInt, AIListID)
+          .input("AIListVslID", mssql.BigInt, AIListVslID)
+          .input("userName", mssql.VarChar(50), userName)
+          .input("rank", mssql.VarChar(50), rank)
           .execute("usp_AI_RN_UpdatePhotoGraphToDB");
         mssql.close();
         res.send("ok");
@@ -467,7 +515,9 @@ module.exports = {
       VesselID,
       tableName,
       newpath,
-      fileContent
+      fileContent,
+      AIListID,
+      AIListVslID
     ) {
       fs.readFile(newpath, async function(err, data) {
         if (!err) {
@@ -490,6 +540,10 @@ module.exports = {
               .input("OriginalFileSize", mssql.Int, fileSize)
               .input("AddedOn", mssql.DateTime, new Date())
               .input("IsUploaded", mssql.Int, 1)
+              .input("AIListID", mssql.BigInt, AIListID)
+              .input("AIListVslID", mssql.BigInt, AIListVslID)
+              .input("userName", mssql.VarChar(50), userName)
+              .input("rank", mssql.VarChar(50), rank)
               .execute("usp_AI_RN_UpdatePhotoGraphToDB");
             mssql.close();
 

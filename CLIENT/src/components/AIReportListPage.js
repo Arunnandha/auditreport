@@ -78,7 +78,7 @@ class AIReportList extends Component {
         <div className="jumbotron">
           {this.callMode === "NewAudit" ? (
             <div>
-              <div className="form-group">
+              <div className="form-group col-4">
                 <label for="drpVSL1" style={{ display: "inline" }}>
                   {" "}
                   VSL Code Filter:{" "}
@@ -86,7 +86,7 @@ class AIReportList extends Component {
                 <select
                   style={{ display: "inline" }}
                   id="drpVSL1"
-                  className="form-control col-sm-2"
+                  className="form-control col-4 "
                   ref={this.selectRef}
                   // disabled={localStorage.getItem("vesselID") != -1}
                   onChange={
@@ -126,8 +126,8 @@ class AIReportList extends Component {
               </DataTable>
             </div>
           ) : (
-            <div>
-              <div className="form-group">
+            <div className="row">
+              <div className="form-group col-4">
                 <label for="drpVSL2" style={{ display: "inline" }}>
                   {" "}
                   VSL Code Filter:{" "}
@@ -135,7 +135,7 @@ class AIReportList extends Component {
                 <select
                   style={{ display: "inline" }}
                   id="drpVSL2"
-                  className="form-control col-sm-2"
+                  className="form-control col-4 "
                   ref={this.selectRef}
                   // disabled={localStorage.getItem("vesselID") != -1}
                   onChange={
@@ -156,6 +156,35 @@ class AIReportList extends Component {
                   })}
                 </select>
               </div>
+              <div className="form-group col-4">
+                <label for="drpAuditTypes" style={{ display: "inline" }}>
+                  Audit Type Filter:
+                </label>
+                <select
+                  style={{ display: "inline" }}
+                  id="drpAuditTypes"
+                  className="form-control col-4 "
+                  ref={this.selectRef}
+                  // disabled={localStorage.getItem("vesselID") != -1}
+                  onChange={
+                    e => {
+                      localStorage.setItem("vesselID", e.target.value);
+                      this.props.getNewModeDetails(this.props.auditType);
+                    }
+
+                    // localStorage.setItem("vesselID",e)
+                  }
+                >
+                  {this.props.vslCodeList.map(item => {
+                    return (
+                      <option key={item.VesselID} value={item.VesselID}>
+                        {item.VslCode}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
               <DataTable
                 header={
                   <span style={{ color: "blue" }}>{this.props.auditType}</span>
