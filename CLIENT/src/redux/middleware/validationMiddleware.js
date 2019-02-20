@@ -56,7 +56,6 @@ export const validationAIDetailsMiddleware = ({
         Flag,
         VesselID
       } = action;
-      console.log("action", action);
       updateAIdetailsToDB(
         UpdatedDetails,
         HistId,

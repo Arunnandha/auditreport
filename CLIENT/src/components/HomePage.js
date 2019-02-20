@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Menu from "./NavMenu.js";
 
-import { getNewModeDetailsFromDB } from "../redux/actions/services.js";
 import { setAuditTypeToStore } from "../redux/actions/actionCreators.js";
 class Home extends Component {
   render() {
@@ -97,12 +96,7 @@ class Home extends Component {
                 }}
               >
                 <Link style={{ color: "white" }} to={`/NewAudit`}>
-                  <button
-                    className="btn btn-info "
-                    onClick={() => {
-                      this.props.getNewModeDetails(this.props.auditType);
-                    }}
-                  >
+                  <button className="btn btn-info " onClick={() => {}}>
                     Add New Report
                   </button>
                 </Link>
@@ -128,7 +122,6 @@ class Home extends Component {
   }
 }
 const mapStateToProps = state => {
-  console.log("state from AIdetails comp:", state);
   return {
     AI_AuditDetails: state.reducer.AI_AuditDetails,
     AI_Details: state.reducer.AIdetails,
@@ -140,8 +133,6 @@ const mapStateToProps = state => {
 
 const dispatchAction = dispatch => {
   return {
-    getNewModeDetails: auditType =>
-      dispatch(getNewModeDetailsFromDB(auditType)),
     setAuditType: auditType => dispatch(setAuditTypeToStore(auditType))
   };
 };

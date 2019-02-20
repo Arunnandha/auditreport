@@ -26,7 +26,10 @@ ReactDOM.render(
       <div>
         <PrivateRoute exact path="/" component={Home} />
         <Route path="/login" component={Login} />
-        <PrivateRoute path="/app/:flag/:histID" component={AddEditReport} />
+        <PrivateRoute
+          path="/app/:flag/:histID/:VesselID"
+          component={AddEditReport}
+        />
         <PrivateRoute path="/openAudit" component={AIReportList} />
         <PrivateRoute path="/NewAudit" component={AIReportList} />
       </div>

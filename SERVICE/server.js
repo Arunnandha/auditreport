@@ -276,9 +276,7 @@ app.post("/checkUserDetails", async (req, res) => {
 app.get("/getVslCode/", async (req, res) => {
   try {
     let conn = await mssql.connect(config);
-    let result1 = await conn
-      .request()
-      .query(`select VesselID,VslCode from V_Vessels order by VslName`);
+    let result1 = await conn.request().execute(`usp_AI_RN_getVslCodeList`);
     mssql.close();
     res.send(result1.recordset);
   } catch (err) {
@@ -299,34 +297,34 @@ app.post("/getNewModeDetails", async (req, res) => {
       .request()
       .input("origin", mssql.VarChar(3), Origin)
       .input("auditType", mssql.VarChar(20), auditType)
-      .execute("usp_AI_RN_GetAIdescription");
+      .input("VesselID", mssql.Int, VesselID)
+      .execute("usp_AI_RN_GetAIList_VSLdetails");
 
-    let result2 = await conn
-      .request()
-      .query(
-        `select ClassNo,Flag,DelivDate,ImoNo from V_Vessels where VesselID=${VesselID}`
-      );
     mssql.close();
-    res.send({ desc: result1.recordset, vslDetails: result2.recordset });
+    res.send({
+      desc: result1.recordsets[0],
+      vslDetails: result1.recordsets[1]
+    });
   } catch (err) {
     console.log("err--GetNewModeDetails-->>>>>" + err);
     mssql.close();
   }
 });
 //when click open audit in client
-app.post("/getAuditDetails", async (req, res) => {
+app.post("/getAuditDetailsList", async (req, res) => {
   var VesselID = req.body.VesselID;
   var Origin = req.body.Origin;
   var auditType = req.body.auditType;
 
-  console.log("origin:", Origin);
   try {
     let conn = await mssql.connect(config);
-    let result1 = await conn.request().query(
-      `select L.Description,L.SubDescription, A.AI_HistID, S.StatusCode, S.StatusString
-      from AI_Hist A,AI_Status S,AI_List L where A.VesselID=${VesselID} 
-      and S.AI_StatusID=A.AI_StatusID and A.AI_ListID = L.AI_ListID and A.Origin='${Origin}'`
-    );
+    let result1 = await conn
+      .request()
+      .input("origin", mssql.VarChar(3), Origin)
+      .input("auditType", mssql.VarChar(20), auditType)
+      .input("VesselID", mssql.Int, VesselID)
+      .execute("usp_AI_RN_GetAuditDetailsList");
+    console.log(result1);
     mssql.close();
 
     res.send(result1.recordset);

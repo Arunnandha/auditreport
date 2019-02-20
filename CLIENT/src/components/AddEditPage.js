@@ -11,17 +11,21 @@ import Menu from "./NavMenu.js";
 class AddEditReport extends Component {
   histID;
   flag;
+  vesselID;
   constructor() {
     super();
     //get flag and histID from URL
     var url = window.location.href;
     var arr = url.split("/");
     this.histID = arr[5];
+    this.vesselID = arr[6];
     this.flag = arr[4].toUpperCase();
   }
   componentDidMount() {
     if (this.histID === -1 || this.flag === "NEW") {
+      //if new edit
     } else {
+      localStorage.setItem("vesselID", this.vesselID);
       this.props.getAIdetails(this.histID);
       //set isNewReport: false
     }

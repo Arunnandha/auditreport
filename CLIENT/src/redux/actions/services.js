@@ -185,19 +185,19 @@ export const getAuditDetailsFromDB = auditType => {
   //get origin from localstorage
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
   let VesselID = localStorage.getItem("vesselID");
+  alert(VesselID);
   return dispatch => {
     axios
-      .post(`${apiUrl}/getAuditDetails`, {
+      .post(`${apiUrl}/getAuditDetailsList`, {
         VesselID: VesselID,
-        Origin: Origin
+        Origin: Origin,
+        auditType: auditType
       })
       .then(res => {
         console.log(res.data);
-        if (auditType === "Office Audit") {
-          res.data = null;
-        }
+
         dispatch({
-          type: action_contants.GET_AUDIT_DETAILS,
+          type: action_contants.GET_AUDIT_DETAILS_LIST,
           payload: res.data
         });
       })

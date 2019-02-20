@@ -35,7 +35,7 @@ const initState = {
 
 const reducer = (state = initState, action) => {
   switch (action.type) {
-    case action_contants.GET_AUDIT_DETAILS:
+    case action_contants.GET_AUDIT_DETAILS_LIST:
       return {
         ...state,
         AI_AuditDetails: action.payload
