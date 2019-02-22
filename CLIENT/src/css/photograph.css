@@ -1,0 +1,11 @@
+.p-tabview {
+  border: 1px solid;
+  background: rgb(226, 226, 226) !important;
+}
+.p-dataview-content > .row {
+  background: khaki !important;
+}
+
+.p-tabview-panels {
+  background: antiquewhite !important;
+}

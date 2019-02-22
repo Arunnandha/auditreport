@@ -37,6 +37,7 @@ export const updateAIdetailsToDB = (
   vesselID,
   dispatch
 ) => {
+  let curusrnameRank = JSON.parse(localStorage.getItem("user")).userinfo[0];
   axios
     .post(`${apiUrl}/updateAIdetails/`, {
       updatedDetails: updatedDetails,
@@ -44,7 +45,9 @@ export const updateAIdetailsToDB = (
       Origin: Origin,
       AI_ListID: AI_ListID,
       flag: "Edit",
-      VesselID: localStorage.getItem("vesselID")
+      VesselID: localStorage.getItem("vesselID"),
+      curUsrName: curusrnameRank.UserName,
+      curUsrRank: curusrnameRank.Role
     })
     .then(res => {
       console.log("res from update", res);
@@ -224,36 +227,27 @@ export const getAuditDetailsFromDB = auditType => {
 };
 export const getNewModeDetailsFromDB = auditType => {
   //get vesselID and origin from local storage
+
   let VesselID = localStorage.getItem("vesselID");
   let Origin = JSON.parse(localStorage.getItem("user")).userinfo[0].Origin;
-  return dispatch => {
-    if (localStorage.getItem("vesselID") == -1) {
-      alert(auditType);
 
-      dispatch({
-        type: action_contants.GET_NEW_MODE_DETAILS,
-        payload: {
-          desc: "",
-          vslDetails: [{ ClassNo: "", DelivDate: "", Flag: "", ImoNo: "" }]
-        }
-      });
-    } else
-      axios
-        .post(`${apiUrl}/getNewModeDetails`, {
-          origin: Origin,
-          vesselID: VesselID,
-          auditType: auditType
-        })
-        .then(res => {
-          dispatch({
-            type: action_contants.GET_NEW_MODE_DETAILS,
-            payload: res.data
-          });
-          console.log("getNewModeDetailsFromDB", res);
-        })
-        .catch(err => {
-          console.log(err);
+  return dispatch => {
+    axios
+      .post(`${apiUrl}/getNewModeDetails`, {
+        origin: Origin,
+        vesselID: VesselID,
+        auditType: auditType
+      })
+      .then(res => {
+        dispatch({
+          type: action_contants.GET_NEW_MODE_DETAILS,
+          payload: res.data
         });
+        console.log("getNewModeDetailsFromDB", res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 };
 

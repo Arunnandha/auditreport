@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { DataView } from "primereact/dataview";
 import { Panel } from "primereact/panel";
 import { Dialog } from "primereact/dialog";
+import "../../css/photograph.css";
 import {
   handleUpload,
   deleteAttachment,
@@ -54,7 +55,7 @@ class PhotoGraphs extends Component {
             {/*click to open delete dialog box */}
             <button
               title="Delete"
-              className="btn btn-info m-2"
+              className="btn btn-outline-info m-2"
               onClick={e => {
                 this.setState({
                   delDialogvisible: true,
@@ -67,7 +68,7 @@ class PhotoGraphs extends Component {
             {/* click to open edit dialog box */}
             <button
               title="Edit"
-              className="btn btn-info m-2"
+              className="btn btn-outline-info m-2"
               onClick={e => {
                 this.setState({
                   visible: true,
@@ -83,7 +84,7 @@ class PhotoGraphs extends Component {
             {/*click to open view dialog box */}
             <button
               title="View"
-              className="btn btn-info m-2"
+              className="btn btn-outline-info m-2"
               onClick={e => {
                 this.setState({
                   selectedImage: blobs.BlobContents,

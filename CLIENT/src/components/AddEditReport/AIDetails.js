@@ -68,9 +68,12 @@ class AIDetails extends Component {
     return (
       <div className="container-fluid">
         <Growl ref={el => (this.growl = el)} />
-        <div style={{ border: "1px solid" }} className="row py-2">
+        <div className="row AIborderBox">
           {/* Column1 */}
-          <div className="col-5 inputField py-2">
+          <div
+            className="col-5 inputField py-2 "
+            style={{ background: "rgb(112,193,179)" }}
+          >
             {/* Name of Audit / Inspection : */}
             <div className="row">
               <div className="col-6 txtAlign">
@@ -205,7 +208,10 @@ class AIDetails extends Component {
           {/* ****************************************** */}
           {/* Column2 */}
           {/* Report Date  */}
-          <div className="col-4 inputField py-2" style={{ textAlign: "right" }}>
+          <div
+            className="col-4 inputField py-2"
+            style={{ textAlign: "right", background: "rgb(112,193,179)" }}
+          >
             <div className="row">
               <div className="col-6">
                 <label>
@@ -301,9 +307,12 @@ class AIDetails extends Component {
           </div>
 
           {/* ****************************************** */}
-          {/* Column1 3 */}
+          {/* Column3 */}
 
-          <div className="col-3 vslDetails py-2" style={{ textAlign: "right" }}>
+          <div
+            className="col-3 vslDetails py-2"
+            style={{ textAlign: "right", background: "rgb(243,255,189)" }}
+          >
             <div style={{ textAlign: "left", fontWeight: 900 }}>
               <label> Vessel Details</label>
             </div>

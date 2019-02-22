@@ -65,18 +65,18 @@ class Header extends Component {
     return (
       <div>
         <div className="container-fluid my-2 background">
-          <div style={{ border: "1px solid" }} className="row">
-            <div className="col-3 mt-3">
+          <div className="row borderBox">
+            <div className="col-3 mt-3" style={{ color: "white" }}>
               <span style={{ fontWeight: 600 }}> AI Ref Code :</span>
               {this.props.AI_Details.AIRefCode}
             </div>
-            <div className="col-3 mt-3">
+            <div className="col-3 mt-3" style={{ color: "white" }}>
               <span style={{ fontWeight: 600 }}>Report Status:</span>
               {this.props.AI_Details.StatusString}
             </div>
             <div className="col-4">
               <button
-                className="btn btn-outline-success m-2"
+                className="btn btn-success m-2"
                 // It triggers the "updateAIdetailsToDB" action creator
                 onClick={() => {
                   this.props.validatingAIDetails(
@@ -92,19 +92,17 @@ class Header extends Component {
                 Save and Exit
               </button>
 
-              <button className="btn btn-outline-success m-2">Finalize</button>
+              <button className="btn btn-success m-2">Finalize</button>
             </div>
             <div className="col-2">
               <button
-                className="btn btn-outline-info m-2"
+                className="btn btn-info m-2"
                 onClick={() => this.getReportLog()}
               >
                 log
               </button>
               <Link to={`/${this.state.callMode}`}>
-                <button className="btn btn-outline-secondary m-2">
-                  Cancel
-                </button>
+                <button className="btn btn-secondary m-2">Cancel</button>
               </Link>
             </div>
           </div>

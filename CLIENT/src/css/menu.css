@@ -3,3 +3,7 @@
   vertical-align: middle;
   display: table-cell;
 }
+button.dropdown-item:hover {
+  color: white;
+  background: black !important;
+}

@@ -39,7 +39,8 @@ const reducer = (state = initState, action) => {
     case action_contants.GET_AUDIT_DETAILS_LIST:
       return {
         ...state,
-        AI_AuditDetails: action.payload
+        AI_AuditDetails: action.payload[0],
+        selectAIDescription: action.payload[1]
       };
     case action_contants.SET_AUDIT_TYPE:
       return {

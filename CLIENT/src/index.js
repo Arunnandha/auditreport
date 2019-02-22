@@ -16,6 +16,8 @@ import store from "./reduxStore.js";
 import { Router, Route, Link, IndexRoute } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import AIReportList from "./components/AIReportListPage.js";
+import ErrorBoundary from "./components/HandleError";
+
 export const history = createBrowserHistory();
 
 ReactDOM.render(

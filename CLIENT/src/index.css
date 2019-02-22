@@ -22,3 +22,7 @@ code {
 .loader-active {
   display: block;
 }
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #20c997 !important;
+  color: white !important;
+}

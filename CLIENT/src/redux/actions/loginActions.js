@@ -19,6 +19,9 @@ export const checkValidUser = (userName, password, VesselID) => {
             vesselID: VesselID
           });
           localStorage.setItem("user", JSON.stringify(res.data));
+          if (localStorage.getItem("vesselID") == -1) {
+            localStorage.setItem("isUsrSelectAll", true);
+          }
           history.push("/");
         }, 1000);
       })

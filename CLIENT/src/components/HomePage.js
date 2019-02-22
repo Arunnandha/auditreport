@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import Menu from "./NavMenu.js";
+import NavMenu from "./NavMenu.js";
 
 import { setAuditTypeToStore } from "../redux/actions/actionCreators.js";
 class Home extends Component {
@@ -9,7 +9,7 @@ class Home extends Component {
     return (
       <div>
         {" "}
-        <Menu />
+        <NavMenu />
         <div
           className="containers container-fluid "
           style={{ backgroundColor: "#17a2b8" }}
@@ -41,7 +41,7 @@ class Home extends Component {
                 }}
               >
                 <div className="dropdown btn-group dropright mb-5">
-                  <button type="button" className="btn btn-secondary">
+                  <button type="button" className="btn btn-outline-secondary">
                     {this.props.auditType}
                   </button>
                   <button
@@ -96,8 +96,12 @@ class Home extends Component {
                 }}
               >
                 <Link style={{ color: "white" }} to={`/NewAudit`}>
-                  <button className="btn btn-info " onClick={() => {}}>
-                    Add New Report
+                  <button className="btn btn-outline-info " onClick={() => {}}>
+                    New Report
+                    <span
+                      className="fa fa-plus-circle ml-1"
+                      aria-hidden="true"
+                    />
                   </button>
                 </Link>
               </div>
@@ -109,8 +113,9 @@ class Home extends Component {
                 }}
               >
                 <Link to="/openAudit">
-                  <button className="btn btn-info">
-                    Edit Existing Reports
+                  <button className="btn btn-outline-info">
+                    Existing Report
+                    <span className="ml-1 fa fa-edit" />
                   </button>
                 </Link>
               </div>

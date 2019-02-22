@@ -97,6 +97,7 @@ export default class Menu extends Component {
                   className="btn btn-warning m-2"
                   onClick={() => {
                     localStorage.clear();
+                    window.location.reload();
                   }}
                 >
                   Logout

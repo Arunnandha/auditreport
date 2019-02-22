@@ -20,7 +20,6 @@ app.use(cors());
 app.get("/getAIdetails/:histID/:vesselID", async (req, res) => {
   var histID = req.params.histID;
   var vesselID = req.params.vesselID;
-  console.log("vesselid", vesselID);
   try {
     let conn = await mssql.connect(config);
     let result1 = await conn
@@ -109,7 +108,6 @@ app.post("/updateAIdetails/", async (req, res) => {
       .execute("usp_AI_RN_UpdateAIDetails");
 
     mssql.close();
-    console.log("output from update api", result1.output);
     res.send({
       histID: result1.output.new_HistID,
       Ref_Code: result1.output.new_Ref_Code,
@@ -180,7 +178,6 @@ app.get("/getAIPhotographs/:histID/:VesselID/:Origin", async (req, res) => {
   var companyID = 1;
   var VesselID = req.params.VesselID;
   var tableName = "AI_Hist_PhotographAttachments";
-  console.log(histID, Origin, VesselID);
   photographData = await blobControl.downloadFile(
     req,
     res,
@@ -337,10 +334,9 @@ app.post("/getAuditDetailsList", async (req, res) => {
       .input("auditType", mssql.VarChar(20), auditType)
       .input("VesselID", mssql.Int, VesselID)
       .execute("usp_AI_RN_GetAuditDetailsList");
-    console.log(result1);
     mssql.close();
 
-    res.send(result1.recordset);
+    res.send(result1.recordsets);
   } catch (err) {
     console.log("err--getAuditDetails-->>>>>" + err);
     mssql.close();

@@ -2,3 +2,10 @@
   background-color: rgb(216, 216, 216);
   vertical-align: middle;
 }
+.borderBox {
+  /* box-sizing: border-box;
+  border-radius: 10px;
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.7); */
+  border: 1px solid;
+  background: black;
+}

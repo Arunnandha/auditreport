@@ -6,7 +6,7 @@ import ReportAndObservation from "./AddEditReport/ReportAndObservation.js";
 import ErrorBoundary from "./HandleError.js";
 import { connect } from "react-redux";
 import { getAIdetailsFromDB } from "../redux/actions/services.js";
-import Menu from "./NavMenu.js";
+import NavMenu from "./NavMenu.js";
 
 class AddEditReport extends Component {
   histID;
@@ -33,13 +33,16 @@ class AddEditReport extends Component {
   render() {
     return (
       <div>
-        <Menu />
+        <NavMenu />
 
-        <div className="jumbotron">
-          <h3>
+        <div
+          className="jumbotron"
+          style={{ backgroundColor: "rgb(23, 162, 184)" }}
+        >
+          {/* <h5>
             New Audit / Inspection Report-
             {JSON.parse(localStorage.getItem("user")).userinfo[0].VslName}
-          </h3>
+          </h5> */}
           {/*ErrorBoundary is a React component. It catch JavaScript errors
          anywhere in their child component tree */}
           <ErrorBoundary>

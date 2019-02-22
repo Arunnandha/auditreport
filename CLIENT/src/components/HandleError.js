@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { errorLogAC } from "../redux/actions/actionCreators.js";
+import NavMenu from "./NavMenu.js";
+import { Link } from "react-router-dom";
+
 class ErrorBoundary extends Component {
   //Any Error in rendering componentDidCatch will be triggered.
   componentDidCatch(error, errorInfo) {
@@ -17,7 +20,20 @@ class ErrorBoundary extends Component {
       // Error Template
       return (
         <div>
-          <h2>Something went wrong.</h2>
+          <NavMenu />
+          <h2>Something went wrong. Login Again</h2>
+          <Link to="/login" refresh="true">
+            <button
+              className="btn btn-outline-secondary m-2"
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+            >
+              LogIn
+              <span className="fa fa-sign-out-alt ml-1" />
+            </button>
+          </Link>
           <details style={{ whiteSpace: "pre-wrap" }}>
             {this.props.errDetails.errorMsg &&
               this.props.errDetails.errorMsg.toString()}
