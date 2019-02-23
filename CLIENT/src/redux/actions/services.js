@@ -3,12 +3,14 @@ import axios from "axios";
 import { history } from "../../index.js";
 
 //get AI details
-const apiUrl = "http://localhost:5000";
+//const apiUrl = "http://localhost:5000";
+//This is moved to package.json as proxy:"http://localhost:5000"
+
 export const getAIdetailsFromDB = histID => {
   return dispatch => {
     var vesselID = localStorage.getItem("vesselID");
     axios
-      .get(`${apiUrl}/getAIdetails/${histID}/${vesselID}`)
+      .get(`/getAIdetails/${histID}/${vesselID}`)
       .then(res => {
         console.log(res.data);
         let AIdetails = res.data[0];
@@ -39,7 +41,7 @@ export const updateAIdetailsToDB = (
 ) => {
   let curusrnameRank = JSON.parse(localStorage.getItem("user")).userinfo[0];
   axios
-    .post(`${apiUrl}/updateAIdetails/`, {
+    .post(`/updateAIdetails/`, {
       updatedDetails: updatedDetails,
       histID: histID,
       Origin: Origin,
@@ -103,7 +105,7 @@ export const handleUpload = (
     };
 
     //upload new photograph and get new "aiHistAttachmentID".
-    axios.post(`${apiUrl}/upLoadImageFile/`, data, config).then(res => {
+    axios.post(`/upLoadImageFile/`, data, config).then(res => {
       let aiHistAttachmentID = res.data;
       //when got response from upLoadImageFile, newly added photograph will render in client
       dispatch({
@@ -118,7 +120,7 @@ export const handleUpload = (
 export const getAIHistAttachment = (histID, VesselID, Origin, dispatch) => {
   let vesselID = localStorage.getItem("vesselID");
   axios
-    .get(`${apiUrl}/getAIPhotographs/${histID}/${vesselID}/${Origin}`)
+    .get(`/getAIPhotographs/${histID}/${vesselID}/${Origin}`)
     .then(res => {
       dispatch({
         type: action_contants.GET_BLOB,
@@ -134,7 +136,7 @@ export const getAIHistAttachment = (histID, VesselID, Origin, dispatch) => {
 export const deleteAttachment = aiHistAttachmentID => {
   return dispatch => {
     axios
-      .post(`${apiUrl}/deleteAIPhotographs/`, {
+      .post(`/deleteAIPhotographs/`, {
         aiHistAttachmentID: aiHistAttachmentID
       })
       .then(res => {
@@ -187,7 +189,7 @@ export const handleEditUpload = (
       NewImagebase64File = reader.result.split("base64,").pop();
     };
 
-    axios.post(`${apiUrl}/editUploadImageFile/`, data, config).then(res => {
+    axios.post(`/editUploadImageFile/`, data, config).then(res => {
       //when got response from upLoadImageFile, newly added photograph will render in client
       dispatch({
         type: action_contants.EDIT_PHOTOGRAPH,
@@ -207,7 +209,7 @@ export const getAuditDetailsFromDB = auditType => {
   let VesselID = localStorage.getItem("vesselID");
   return dispatch => {
     axios
-      .post(`${apiUrl}/getAuditDetailsList`, {
+      .post(`/getAuditDetailsList`, {
         VesselID: VesselID,
         Origin: Origin,
         auditType: auditType
@@ -233,7 +235,7 @@ export const getNewModeDetailsFromDB = auditType => {
 
   return dispatch => {
     axios
-      .post(`${apiUrl}/getNewModeDetails`, {
+      .post(`/getNewModeDetails`, {
         origin: Origin,
         vesselID: VesselID,
         auditType: auditType
@@ -262,7 +264,7 @@ export const getNewReportFromDB = (newAIdetails, AI_ListID, AIDescription) => {
     // this method will dispatch the "GET_NEW_HIST_ID" action
 
     axios
-      .post(`${apiUrl}/updateAIdetails/`, {
+      .post(`/updateAIdetails/`, {
         updatedDetails: newAIdetails,
         histID: -1,
         Origin: Origin,
@@ -292,7 +294,7 @@ export const getNewReportFromDB = (newAIdetails, AI_ListID, AIDescription) => {
 export const getAIReportLog = (AIListID, AIListVslID, vesselID) => {
   return dispatch => {
     axios
-      .post(`${apiUrl}/getAILogDetails`, {
+      .post(`/getAILogDetails`, {
         AIListID: AIListID,
         AIListVslID: AIListVslID,
         vesselID: vesselID

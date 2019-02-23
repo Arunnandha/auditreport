@@ -1,11 +1,11 @@
 import { action_contants } from "./action-types.js";
 import axios from "axios";
 import { history } from "../../index";
-const apiUrl = "http://localhost:5000";
+
 export const checkValidUser = (userName, password, VesselID) => {
   return dispatch => {
     axios
-      .post(`${apiUrl}/checkUserDetails/`, {
+      .post(`/checkUserDetails/`, {
         userName: userName,
         psswd: password,
         vesselID: VesselID
@@ -41,7 +41,7 @@ export const checkValidUser = (userName, password, VesselID) => {
 export const getVslCode = () => {
   return dispatch => {
     axios
-      .get(`${apiUrl}/getVslCode/`)
+      .get(`/getVslCode/`)
       .then(res => {
         dispatch({
           type: action_contants.GETVSLCODE,

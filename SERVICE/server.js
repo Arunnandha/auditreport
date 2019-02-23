@@ -9,8 +9,9 @@ var blobControl = require("./blobController");
 var jwt = require("jsonwebtoken");
 var configFile = require("./config/config.js");
 var config = configFile.config;
+const { secretkey } = configFile;
 var securitySettings = {
-  secretkey: "my_secret_key"
+  secretkey: secretkey
 };
 
 app.use(bodyParser.json());
@@ -371,6 +372,7 @@ mssql.on("error", err => {
   // ... error handler
 });
 
-app.listen(5000, () => {
-  console.log("server running at port 5000");
+const { port } = configFile;
+app.listen(port, () => {
+  console.log(`server running at port ${port || 5000}`);
 });
