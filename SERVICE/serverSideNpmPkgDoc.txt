@@ -1,0 +1,217 @@
+1."azure-storage": "^2.10.2"
+ URL:https://www.npmjs.com/package/azure-storage
+
+  step1: npm i azure-storage --save
+     
+ step2:  var azure = require('azure-storage');
+
+  	# Azure credentials
+
+	ACCESS_KEY="sdfaef3456#dfgrgf@dfgdfg*sadfg3REEFehrtert34a#4YG%e4"
+	STORAGE_ACCOUNT= "accnt_name"
+	CONTAINER= "test-photo"
+
+  step3: var blobService = azure.createBlobService(STORAGE_ACCOUNT, ACCESS_KEY);
+
+  step4: blobService.createContainerIfNotExists(CONTAINER, {
+ 	 publicAccessLevel: 'blob'
+	}, function(error, result, response) {
+  	if (!error) {
+   	 // if result = true, container was created.
+   	 // if result = false, container already existed.
+  	}
+});
+
+step5: Create blob file from local 
+blobService.createBlockBlobFromLocalFile(CONTAINER, 'taskblob', 'task1-upload.txt', function(error, result, response) {
+  if (!error) {
+    // file uploaded
+  }
+});
+
+(or)
+
+step6:Create blob file from stream
+
+   blobService.createBlockBlobFromStream(
+                CONTAINER,
+                  fileName, //filename
+                fs.createReadStream(filepath),
+                data.length,
+                function(error, result, response) {
+                  if (error) {
+                    console.log("Couldn't upload stream");
+                    console.error(error);
+                  } else {
+                    fs.unlink(filepath, function(err) {
+                      if (err && err.code == "ENOENT") {
+                        // file doens't exist
+                        console.info("File doesn't exist, won't remove it.");
+                      } else if (err) {
+                        // other errors, e.g. maybe we don't have enough permission
+                        console.error(
+                          "Error occurred while trying to remove file"
+                        );
+                      } else {
+                        console.info(`removed`);
+                      }
+                    });
+
+                    console.log("Stream uploaded successfully");
+                  }
+                }
+              );
+step7: get blob file to local(download blob file)
+
+           blobService.getBlobToLocalFile(
+                CONTAINER,
+                blobName, //blob file name with extension in Azure
+                downloadfilename, //filename with path
+                function(error) {
+                  if (!error) {
+                    var fs = require("fs");
+                    fs.readFile(downloadfilename, null, async (err, data) => {
+                      try {
+                        var blobContents = await Buffer.from(data).toString(
+                          "base64"
+                        );
+                       
+                      } catch (error) {
+                        console.log("Error from download file from  azure");
+                      }
+
+                      if (err) {
+                        return console.log(err);
+                      }
+                    });
+                  }
+                }
+              );
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.    "body-parser": "^1.18.3",
+     The  body-parser module parses the JSON, buffer, string and URL encoded data submitted using HTTP POST request.
+
+     step1:  npm install body-parser --save
+
+    step2: var bodyParser = require('body-parser')
+    step 3:   // parse application/json
+  	 app.use(bodyParser.json())
+
+    step 4:	 // parse application/x-www-form-urlencoded
+   	app.use(bodyParser.urlencoded({ extended: false }))
+ 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "cors": "^2.8.5",
+  
+
+step1: npm i cors --save
+step2: var cors = require('cors')
+step3: app.use(cors())
+
+(or) 
+
+//CORS Middleware
+app.use(function (req, res, next) {
+    //Enabling CORS 
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");  
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, contentType,Content-Type, Accept, Authorization,Content-Disposition,Content-Type,Content-type,Content-disposition");
+
+    next();
+});
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    "formidable": "^1.2.1",
+
+step1:  npm i formidable --save
+step2:  var formidable = require("formidable");
+
+var form = new formidable.IncomingForm(); 
+  form.parse(req, async function(err, fields, files) {
+    var oldpath = files.file.path; //incomming file stored in temporary location
+    var desc = fields.description; //desc key-value appended in clide side
+    var fileName = files.file.name;
+    var fileSize = files.file.size;
+    
+    var fileContent;
+    var newpath = "C:/wdir/" + fileName;
+  
+    fs.rename(oldpath, newpath, async function(err) 
+	{ 
+      		if (err) throw err;
+      		fs.readFile(newpath, async function(err, data) 
+			{
+       		 		fileContent = new Buffer(data);
+       			}
+ 	})
+})
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "mssql": "^4.3.0"
+step1:  npm i mssql --save
+step2:  var mssql = require("mssql");
+
+step3: 
+var config = {
+    user:'xxxx',
+    password:******,
+    port: 1433,
+    server: sqlserver,
+    database:DB Name,
+    options: { encrypt: true }
+}
+
+try {
+    var Origin = req.body.origin;
+    var VesselID = req.body.vesselID;
+    var auditType = req.body.auditType;
+
+    let conn = await mssql.connect(config);
+    let result1 = await conn
+      .request()
+      .input("origin", mssql.VarChar(3), Origin)
+      .input("auditType", mssql.VarChar(20), auditType)
+      .input("VesselID", mssql.Int, VesselID)
+      .execute("usp_AI_RN_GetAIList_VSLdetails");
+
+    mssql.close();
+    //sql server returns two record sets
+    res.send({
+      desc: result1.recordsets[0],
+      vslDetails: result1.recordsets[1]
+    }); //send data as 
+  } catch (err) {
+    console.log("err--GetNewModeDetails-->>>>>" + err);
+    mssql.close();
+  }
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    "jsonwebtoken": "^8.4.0",
+
+step1:npm i jsonwebtoken --save
+step2: var jwt = require('jsonwebtoken');
+
+step3: var token = jwt.sign( {payload }, secretKey); 
+// create token when user-password validation valid in db 
+//send to client then store the token in local or session storage
+step4: 
+jwt.verify(token, secretKey, function(err, decoded) {
+// verify token for every request from client  after login
+  if (err) {
+
+      err = {
+        name: 'TokenExpiredError',
+        message: 'jwt expired',
+        expiredAt: 1408621000
+      }else {
+   //send data
+}
+    
+  }
+});
+
+
+https://www.npmjs.com/package/jsonwebtoken
+

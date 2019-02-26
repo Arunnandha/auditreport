@@ -1,0 +1,8 @@
+1.classnames  --- > Prime react depends on this package to include class instead of className in react.
+2.history ---->history manage session history, history stack, navigate, confirm navigation, and persist state between sessions.
+3.react-loaders -----> Login page loader.
+4.node-sass ----->  Used to compile sass to css.Sass is a preprocessor scripting language that is compile to css.
+5.react-transition-group ----->Prime react using this pacakage for transition (animation) .Ex:validation Msg in Report page.
+6.bootstrap -----> To make responsive for some controls we using.
+7.Font Awsome as CDN -----> we using this for icons.
+8.redux-persist ----->To persist Redux state (currently we are not using this due to some issue need to implement in right way)

@@ -17,7 +17,8 @@ class AIReportList extends Component {
     Origin: JSON.parse(localStorage.getItem("user")).userinfo[0].Origin,
     disableDropdown: false, //disable dropdown user login with one VSL
     Description: null, //used for Audit Type filter
-    descriptionList: [] //If choose Audit Type "ALL" It is used to store All Audit Type
+    descriptionList: [], //If choose Audit Type "ALL" It is used to store All Audit Type
+    VslCode: null
   };
 
   newVslCodeList = [];
@@ -35,15 +36,17 @@ class AIReportList extends Component {
 
   componentWillReceiveProps(props) {
     var dataList = []; //used to store all Audit Types
-    dataList.push(
-      props.selectAIDescription.map(item => {
-        console.log("dataList", item);
-        return item.Description;
-      })
-    );
+    dataList.push(props.selectAIDescription.map(item => item.Description));
     this.setState({
       descriptionList: dataList
     });
+
+    var vesselCodeList = [];
+    vesselCodeList.push(props.vslCodeList.map(item => item.VslCode));
+    this.setState({
+      vesselCodeList: vesselCodeList
+    });
+    setTimeout(() => console.log(this.state.vesselCodeList), 3000);
   }
   componentDidMount() {
     this.newVslCodeList = [...this.props.vslCodeList];
@@ -88,28 +91,30 @@ class AIReportList extends Component {
       this.selectRef.current.value = localStorage.getItem("vesselID");
     }
   }
+
   actionTemplate = (rowData, column) => {
     //   if StatusCode is closed , edit button will be removed
     return rowData.StatusCode === "Closed" ? null : (
       <Link
-        style={{ color: "white" }}
+        style={{ color: "blue" }}
         to={`/app/Edit/${rowData.AI_HistID}/${rowData.VesselID}`}
       >
-        <button className="btn btn-outline-primary">
-          <span className="fa fa-edit" />
-        </button>
+        {/* <button className="btn btn-outline-primary">
+        </button> */}
+        <span className="fa fa-edit" />
       </Link>
     );
   };
+
   attachmentTemplate = (rowData, column) => {
     //   if StatusCode is closed , edit button will be removed
     return rowData.HasPhotographAttachments ? (
       <i className="fa fa-paperclip" aria-hidden="true" />
     ) : null;
   };
-  onBrandChange(event) {
+
+  onAuditTypeChange(event) {
     if (event.target.value == "All") {
-      console.log(this.state.descriptionList);
       this.dt.filter(this.state.descriptionList[0], "Description", "in");
       this.setState({
         Description: this.state.descriptionList[0]
@@ -119,11 +124,25 @@ class AIReportList extends Component {
       this.setState({ Description: event.target.value });
     }
   }
+  async onVesselCodeChange(event) {
+    if (event.target.value == -1) {
+      this.dt.filter(this.state.vesselCodeList[0], "VslCode", "in");
+      this.setState({
+        Description: this.state.vesselCodeList[0]
+      });
+    } else {
+      let vesselCode = await this.props.vslCodeList.find(
+        item => item.VesselID == event.target.value
+      );
+      this.dt.filter(vesselCode.VslCode, "VslCode", "equals");
+      this.setState({ VslCode: vesselCode.VslCode });
+    }
+  }
   createNewReport = (rowData, column) => {
     return (
-      <Link style={{ color: "white" }} to={`/app/New/-1/-1`}>
+      <Link style={{ color: "blue" }} to={`/app/New/-1/-1`}>
         <button
-          className="btn btn-outline-info "
+          className="px-2"
           onClick={() => {
             this.props.getNewReport(
               this.props.AI_Details,
@@ -206,7 +225,8 @@ class AIReportList extends Component {
                     {/* <Column field="AI_ListID" header="AI_ListID" /> */}
                     <Column
                       field="Description"
-                      header={`${this.props.auditType}-Audit Type`}
+                      // header={`${this.props.auditType}-Audit Type`}
+                      header="Audit Type"
                       style={{ width: "80%" }}
                     />
                     <Column
@@ -236,15 +256,11 @@ class AIReportList extends Component {
                   id="drpAuditTypes"
                   className="form-control col-md-6 "
                   ref={this.selectRef}
-                  // disabled={localStorage.getItem("vesselID") != -1}
-                  onChange={
-                    e => {
-                      localStorage.setItem("vesselID", e.target.value);
-                      this.props.getAuditDetails(this.props.auditType);
-                    }
-
-                    // localStorage.setItem("vesselID",e)
-                  }
+                  onChange={e => {
+                    localStorage.setItem("vesselID", e.target.value);
+                    // this.props.getAuditDetails(this.props.auditType);
+                    this.onVesselCodeChange(e);
+                  }}
                 >
                   {this.props.vslCodeList.map(item => {
                     return (
@@ -269,7 +285,7 @@ class AIReportList extends Component {
                   style={{ display: "inline" }}
                   id="drpAuditTypes"
                   className="form-control col-md-4 "
-                  onChange={e => this.onBrandChange(e)}
+                  onChange={e => this.onAuditTypeChange(e)}
                 >
                   <option value="All">All</option>
                   {this.props.selectAIDescription.map(item => {
@@ -303,31 +319,32 @@ class AIReportList extends Component {
                 {/* <Column field="AI_HistID" header="AI_HistID" /> */}
                 <Column
                   field="VslCode"
-                  header="Vessel Code"
-                  style={{ width: "8%" }}
+                  header="VSL Code"
+                  style={{ width: "7%" }}
                   sortable={true}
                 />
                 <Column
                   field="VslName"
                   header="Vessel Name"
-                  style={{ width: "10%" }}
+                  style={{ width: "12%" }}
                   sortable={true}
                 />
 
                 <Column
                   field="Description"
-                  header={`${this.props.auditType}-Audit Type`}
-                  style={{ width: "18%" }}
+                  // header={`${this.props.auditType}-Audit Type`}
+                  header="Audit Type"
+                  style={{ width: "20%" }}
                 />
                 <Column
                   field="StartDate"
                   header="Start Date"
-                  style={{ width: "10%" }}
+                  style={{ width: "8%" }}
                 />
                 <Column
                   field="EndDate"
                   header="End Date"
-                  style={{ width: "10%" }}
+                  style={{ width: "8%" }}
                 />
                 <Column
                   field="ReportBy"

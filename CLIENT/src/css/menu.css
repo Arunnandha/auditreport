@@ -7,3 +7,21 @@ button.dropdown-item:hover {
   color: white;
   background: black !important;
 }
+
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td,
+.p-datatable .p-datatable-tfoot > tr > td {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  text-overflow: unset !important;
+  /* white-space: nowrap; */
+  overflow: unset !important;
+  padding: unset !important;
+}
+body .p-datatable .p-datatable-tbody > tr > td {
+  padding: unset !important;
+}

@@ -103,9 +103,9 @@ app.post("/updateAIdetails/", async (req, res) => {
       .input("AI_ListID", mssql.Int, AI_ListID)
       .input("callMode", mssql.VarChar(10), flag)
       .input("Remarks", mssql.VarChar(10), "")
-      .output("new_HistID", New_HistID)
-      .output("new_Ref_Code", new_Ref_Code)
-      .output("newAIListVslID", newAIListVslID)
+      .output("new_HistID", mssql.BigInt)
+      .output("new_Ref_Code", mssql.VarChar(30))
+      .output("newAIListVslID", mssql.BigInt)
       .execute("usp_AI_RN_UpdateAIDetails");
 
     mssql.close();

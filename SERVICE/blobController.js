@@ -133,7 +133,7 @@ module.exports = {
           .input("AIListVslID", mssql.BigInt, AIListVslID)
           .input("userName", mssql.VarChar(50), userName)
           .input("rank", mssql.VarChar(50), rank)
-          .output("Newai_HistPhotoGraphID", AI_HistPhotoGraphID)
+          .output("Newai_HistPhotoGraphID", mssql.BigInt)
           .execute("usp_AI_RN_UploadPhotoGraphToDB");
 
         mssql.close();
@@ -198,7 +198,7 @@ module.exports = {
               .input("AIListVslID", mssql.BigInt, AIListVslID)
               .input("userName", mssql.VarChar(50), userName)
               .input("rank", mssql.VarChar(50), rank)
-              .output("Newai_HistPhotoGraphID", AI_HistPhotoGraphID)
+              .output("Newai_HistPhotoGraphID", mssql.BigInt)
               .execute("usp_AI_RN_UploadPhotoGraphToDB");
 
             console.log("newly inserted value ", AI_HistPhotoGraphID);
@@ -343,8 +343,8 @@ module.exports = {
               console.log("downloadfilename", downloadfilename);
               blobService.getBlobToLocalFile(
                 container,
-                blobName,
-                downloadfilename,
+                blobName, //blob file name with extension
+                downloadfilename, //file name with path
                 function(error) {
                   if (!error) {
                     var fs = require("fs");
